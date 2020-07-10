@@ -4,6 +4,8 @@ public class App
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+        UserInputHandler uih = new UserInputHandler();
+
+        new WebCrawler().getPageLinks(uih.getCrawlingParameters(), 0);
     }
 }
