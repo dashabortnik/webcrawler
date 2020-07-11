@@ -1,8 +1,5 @@
 # Web crawler
-Web crawler collects statistics about the number of given terms on visited pages.  
-User defines the seed (start URL), link depth (8 by default), max visited pages limit (10000 by default), and the terms which should be counted.  
-The output contains all visited pages and numbers of occurrences of each term on every page.  
-All data is serialized into a CSV file; top 10 pages by total hits are printed to another CSV file and console sorted by total hits.  
+Web crawler collects statistics about the number of given terms on visited pages. User defines the seed (start URL), link depth (8 by default), max visited pages limit (10000 by default), and the terms which should be counted. The output contains all visited pages and numbers of occurrences of each term on every page. All data is serialized into a CSV file; top 10 pages by total hits are printed to another CSV file and console sorted by total hits.  
 
 ## Example
 Seed: https://en.wikipedia.org/wiki/Elon_Musk  

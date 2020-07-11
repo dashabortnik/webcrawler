@@ -1,14 +1,18 @@
 package com.softeq;
 
+import java.util.ArrayList;
+
 public class SearchInput {
     private String seed;
     private int linkDepth;
     private int maxVisitedPagesLimit;
+    ArrayList <String> searchTermsList;
 
-    public SearchInput(String seed, int linkDepth, int maxVisitedPagesLimit) {
+    public SearchInput(String seed, int linkDepth, int maxVisitedPagesLimit, ArrayList<String> searchTermsList) {
         this.seed = seed;
         this.linkDepth = linkDepth;
         this.maxVisitedPagesLimit = maxVisitedPagesLimit;
+        this.searchTermsList = searchTermsList;
     }
 
     public String getSeed() {
@@ -33,5 +37,13 @@ public class SearchInput {
 
     public void setMaxVisitedPagesLimit(int maxVisitedPagesLimit) {
         this.maxVisitedPagesLimit = maxVisitedPagesLimit;
+    }
+
+    public ArrayList<String> getSearchTermsList() {
+        return searchTermsList;
+    }
+
+    public void setSearchTermsList(ArrayList<String> searchTermsList) {
+        this.searchTermsList = searchTermsList;
     }
 }
