@@ -10,7 +10,7 @@ public enum Constant {
      * web crawler should stop after hitting this number of links.
      */
 
-    DEF_LINK_DEPTH(1), DEF_VISITED_PAGES_LIMIT (10000);
+    DEF_LINK_DEPTH(1), DEF_VISITED_PAGES_LIMIT (10000), NUMBER_OF_TOP_ENTRIES_TO_PRINT(10);
 
     private int value;
 
