@@ -2,11 +2,27 @@ package com.softeq;
 
 import java.util.ArrayList;
 
+/**
+ * SearchInput class is an entity for handling search input from user.
+ * Has fields <b>seed</b>, <b>linkDepth</b>, <b>maxVisitedPagesLimit</b> and <b>searchTermsList</b>.
+ */
 public class SearchInput {
-    private String seed;
-    private int linkDepth;
-    private int maxVisitedPagesLimit;
-    ArrayList <String> searchTermsList;
+    /**
+     * Field seed contains start page for web crawling.
+     */
+    private final String seed;
+    /**
+     * Field linkDepth contains the length of chain of hits if a web crawler follows 1 link from each page.
+     */
+    private final int linkDepth;
+    /**
+     * Field maxVisitedPagesLimit contains a number of visited pages after which web crawler should stop.
+     */
+    private final int maxVisitedPagesLimit;
+    /**
+     * Field searchTermsList contains search terms specified by user which need to be counted on every page.
+     */
+    private final ArrayList <String> searchTermsList;
 
     public SearchInput(String seed, int linkDepth, int maxVisitedPagesLimit, ArrayList<String> searchTermsList) {
         this.seed = seed;
@@ -19,31 +35,15 @@ public class SearchInput {
         return seed;
     }
 
-    public void setSeed(String seed) {
-        this.seed = seed;
-    }
-
     public int getLinkDepth() {
         return linkDepth;
-    }
-
-    public void setLinkDepth(int linkDepth) {
-        this.linkDepth = linkDepth;
     }
 
     public int getMaxVisitedPagesLimit() {
         return maxVisitedPagesLimit;
     }
 
-    public void setMaxVisitedPagesLimit(int maxVisitedPagesLimit) {
-        this.maxVisitedPagesLimit = maxVisitedPagesLimit;
-    }
-
     public ArrayList<String> getSearchTermsList() {
         return searchTermsList;
-    }
-
-    public void setSearchTermsList(ArrayList<String> searchTermsList) {
-        this.searchTermsList = searchTermsList;
     }
 }
