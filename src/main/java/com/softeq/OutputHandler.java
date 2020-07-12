@@ -1,6 +1,8 @@
 package com.softeq;
 
 import com.opencsv.CSVWriter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,6 +14,8 @@ import java.util.List;
  */
 public class OutputHandler {
 
+    final Logger logger = LogManager.getLogger(OutputHandler.class);
+
     /**
      * PrintAllData method handles all unsorted web crawling data and prints it to console and to CSV file.
      * @param searchData is a list of SearchResult objects.
@@ -22,12 +26,12 @@ public class OutputHandler {
             for (SearchResult sr : searchData) {
                 String stringFromSr = sr.toCSVStringHitsByWord();
                 writer.writeNext(stringFromSr.split(","));
-                System.out.println(stringFromSr);
+                logger.debug("CSV string hits by word: " + stringFromSr);
             }
             writer.flush();
-            System.out.println("Data entered");
+            logger.info("All search data was successfully entered into a file.");
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warn("Exception while writing all data to file: " + e);
         }
     }
 
@@ -49,9 +53,9 @@ public class OutputHandler {
                 writer.writeNext(searchData.get(i).toCSVStringHitsByWord().split(","));
             }
             writer.flush();
-            System.out.println("Data of top hits entered");
+            logger.info("Search data by top hits was successfully entered into a file.");
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warn("Exception while writing all data to file: " + e);
         }
     }
 }

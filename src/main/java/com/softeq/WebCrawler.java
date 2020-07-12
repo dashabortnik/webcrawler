@@ -1,5 +1,8 @@
 package com.softeq;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,6 +18,9 @@ import java.util.List;
  */
 
 public class WebCrawler {
+
+    final Logger logger = LogManager.getLogger(WebCrawler.class);
+
     public static final String CSS_LINK_SELECTOR = "a[href]";
     public static final String PAGE_ATTRIBUTE_LINK_SELECTOR = "abs:href";
 
@@ -72,7 +78,7 @@ public class WebCrawler {
 
         // Check if you have already crawled the URLs
         if (!links.contains(seed) && (depthCounter < linkDepth) && visitedPagesCounter < maxPagesNumber) {
-            System.out.println("Depth: " + depthCounter + " [" + seed + "]");
+            logger.debug("Current depth: " + depthCounter + " [" + seed + "]");
             try {
 
                 if (links.add(seed)) {
@@ -80,52 +86,43 @@ public class WebCrawler {
                 }
 
                 // Fetch the HTML code
-                Document document = Jsoup.connect(seed).timeout(5000).get();
+                Document document = Jsoup.connect(seed).get();
 
                 visitedPagesCounter++;
-                System.out.println("Page count: " + visitedPagesCounter);
+                logger.debug("Current page count: " + visitedPagesCounter);
+
 
                 //extract the whole document body
                 String html = document.body().toString();
                 String parsedText = Jsoup.parse(html, seed).text().toLowerCase();
 
-//                InputStream inStream = new URL(seed).openStream();
-//                Document document = Jsoup.parse(inStream, "utf-8", seed);
-//                String parsedText = document.text().toLowerCase();
-                //check again!!!
-
-//                System.out.println("TEXT: " + parsedText);
+                //System.out.println("TEXT: " + parsedText);
 
                 //count occurrences of given search words in the text
                 for (String searchWord : searchTermsList){
-                    int number = org.apache.commons.lang3.StringUtils.countMatches (parsedText, searchWord.toLowerCase());
-                    System.out.println("Count of phrase <" + searchWord + "> is: " + number);
+                    int number = StringUtils.countMatches (parsedText, searchWord.toLowerCase());
+                    logger.debug("Count of phrase <" + searchWord + "> is: " + number);
 
                     //add to list of hits for this link
                     hitsByWord.add(number);
 
                     //add to sum of all hits for this link
                     totalHits = totalHits + number;
-                    System.out.println("Total hits: " + totalHits);
+                    logger.debug("Total hits: " + totalHits);
                 }
-
-                // need to try loading the whole page
-                // as current solution doesn't catch info loaded by javascript
-                // maybe need to use htmlunit
 
                 // Parse the HTML to extract links to other URLs
                 Elements linksOnPage = document.select(CSS_LINK_SELECTOR);
                 depthCounter++;
 
                 searchData.add(new SearchResult(seed, totalHits, hitsByWord));
-                System.out.println("SEARCH DATA: " + searchData.toString());
 
                 // For each extracted URL invoke the method getPageLinks recursively again
                 for (Element page : linksOnPage) {
                     getPageLinks(new SearchInput(page.attr(PAGE_ATTRIBUTE_LINK_SELECTOR), linkDepth, maxPagesNumber, searchTermsList), depthCounter);
                 }
             } catch (IOException e) {
-                System.err.println("For '" + seed + "': " + e.getMessage());
+                logger.warn("Exception for '" + seed + "': " + e);
             }
         }
     }

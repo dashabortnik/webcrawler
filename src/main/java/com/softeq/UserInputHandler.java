@@ -1,16 +1,23 @@
 package com.softeq;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
  * Class for handling of user input for web crawling.
  */
 public class UserInputHandler {
+
+    final Logger logger = LogManager.getLogger(UserInputHandler.class);
 
     /**
      * GetCrawlingParameters method requests user input and processes it into a SearchInput object.
@@ -33,7 +40,7 @@ public class UserInputHandler {
             do{
                 System.out.println("Please provide a starting URL (seed) for web crawling.");
                 seed = in.nextLine();
-                System.out.println("You entered seed: " + seed);
+                logger.debug("User entered seed: " + seed);
             } while (!isValidUrl(seed));
 
             /*
@@ -41,7 +48,7 @@ public class UserInputHandler {
              */
             System.out.println("Please provide search terms separated by commas.");
             searchTermsLine = in.nextLine();
-            System.out.println("You entered search terms: " + searchTermsLine);
+            logger.debug("User entered search terms: " + searchTermsLine);
 
             /*
               For linkDepth: user input is requested in form of a positive integer.
@@ -52,7 +59,7 @@ public class UserInputHandler {
             if (inputLinkDepth>0){
                 userLinkDepth = inputLinkDepth;
             }
-            System.out.println("You entered link depth: " + userLinkDepth);
+            logger.debug("User entered link depth: " + userLinkDepth);
 
             /*
               For maxPagesLimit: user input is requested in form of a positive integer.
@@ -63,10 +70,12 @@ public class UserInputHandler {
             if (inputMaxPagesLimit>0){
                 userMaxPagesLimit = inputMaxPagesLimit;
             }
-            System.out.println("You entered link depth: " + userMaxPagesLimit);
+            logger.debug("User entered link depth: " + userMaxPagesLimit);
 
+        } catch (NoSuchElementException | IllegalStateException e) {
+            logger.warn("Expected input element wasn't found or scanner was closed. " + e);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.warn("Exception occurred during scanner input. " + e);
         }
 
         /*
@@ -77,7 +86,7 @@ public class UserInputHandler {
             ArrayList<String> searchTermsList = new ArrayList<>(Arrays.asList(StringUtils.stripAll(searchTermsLine.split(","))));
             searchInput = new SearchInput(seed, userLinkDepth, userMaxPagesLimit, searchTermsList);
         } else {
-            System.out.println("Further operation is impossible: not enough data was provided.");
+            logger.warn("Further operation is impossible: not enough data was provided.");
         }
         return searchInput;
     }
@@ -86,8 +95,11 @@ public class UserInputHandler {
         try {
             new URL(seed).toURI();
             return true;
+        } catch (MalformedURLException e){
+            logger.warn("Provided string " + seed + "is not a valid URL. " + e);
+            return false;
         } catch (Exception e) {
-            System.out.println("Provided url " + seed + " is invalid. " + e);
+            logger.warn("Validity check on " + seed + " failed. " + e);
             return false;
         }
     }
