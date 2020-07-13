@@ -8,6 +8,7 @@ import com.softeq.service.WebCrawler;
 public class App
 {
     public static void main( String[] args ){
+
         InputHandlerSolver inputHandlerSolver = new InputHandlerSolver();
         SearchInput searchInput = inputHandlerSolver.handleInput(args);
         WebCrawler webCrawler = new WebCrawler();

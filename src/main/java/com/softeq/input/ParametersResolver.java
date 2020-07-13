@@ -1,6 +1,7 @@
 package com.softeq.input;
 
-import com.softeq.Constant;
+import com.softeq.constant.Constant;
+import com.softeq.constant.ConstantConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,11 +17,14 @@ public class ParametersResolver {
 
     public SearchInput resolveParams(String seed, String searchTermsLine, int linkDepth, int maxPagesLimit){
 
-        int inputLinkDepth = Constant.DEF_LINK_DEPTH.getValue();
+        int inputLinkDepth = Integer.parseInt(ConstantConfig.getInstance().getProperty(Constant.DEF_LINK_DEPTH));
+        logger.debug("Default depth:" + inputLinkDepth);
         if (linkDepth>0){
             inputLinkDepth = linkDepth;
         }
-        int inputMaxPagesLimit = Constant.DEF_VISITED_PAGES_LIMIT.getValue();
+
+        int inputMaxPagesLimit = Integer.parseInt(ConstantConfig.getInstance().getProperty(Constant.DEF_VISITED_PAGES_LIMIT));
+        logger.debug("Default page limit:" + inputMaxPagesLimit);
         if (maxPagesLimit>0){
             inputMaxPagesLimit = maxPagesLimit;
         }

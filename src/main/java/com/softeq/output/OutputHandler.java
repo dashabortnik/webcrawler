@@ -1,7 +1,8 @@
 package com.softeq.output;
 
 import com.opencsv.CSVWriter;
-import com.softeq.Constant;
+import com.softeq.constant.Constant;
+import com.softeq.constant.ConstantConfig;
 import com.softeq.service.SearchResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,17 +40,17 @@ public class OutputHandler {
 
     /**
      * PrintTopDataToFile method sorts web crawling data by total hits and prints a number of top entries
-     * specified by Constant.NUMBER_OF_TOP_ENTRIES_TO_PRINT to CSV file.
+     * specified by properties to CSV file.
      * @param searchData is a list of SearchResult objects.
      * @see SearchResult
-     * @see Constant
      */
     public void printTopDataToFile(List<SearchResult> searchData){
 
         searchData.sort(Comparator.comparing(SearchResult::getTotalHits).reversed());
         try (CSVWriter writer = new CSVWriter(new FileWriter("C:\\Users\\solei\\Documents\\topHitsOutput.csv"))){
             int listSize = searchData.size();
-            int numberOfEntriesToPrint = Constant.NUMBER_OF_TOP_ENTRIES_TO_PRINT.getValue();
+            int numberOfEntriesToPrint = Integer.parseInt(ConstantConfig.getInstance().getProperty(Constant.NUMBER_OF_TOP_ENTRIES_TO_PRINT));
+            logger.debug("Number of entries to print: " + numberOfEntriesToPrint);
             int maxIndexToPrint = Math.min(listSize, numberOfEntriesToPrint);
             for (int i = 0; i<maxIndexToPrint; i++){
                 writer.writeNext(searchData.get(i).toCSVStringHitsByWord().split(","));
@@ -57,7 +58,7 @@ public class OutputHandler {
             writer.flush();
             logger.info("Search data by top hits was successfully entered into a file.");
         } catch (IOException e) {
-            logger.warn("Exception while writing all data to file: " + e);
+            logger.warn("Exception while writing top data to a file: " + e);
         }
     }
 }
