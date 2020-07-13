@@ -32,7 +32,7 @@ public class WebCrawler {
     /**
      * Field searchData contains a list of SearchResult objects for all visited pages.
      */
-    private final List<SearchResult> searchData;
+    private final ArrayList<SearchResult> searchData;
     /**
      * Field visitedPagesCounter counts total number of pages visited by web crawler.
      */
@@ -43,7 +43,7 @@ public class WebCrawler {
         searchData = new ArrayList<>();
     }
 
-    public List<SearchResult> getSearchData() {
+    public ArrayList<SearchResult> getSearchData() {
         return searchData;
     }
 

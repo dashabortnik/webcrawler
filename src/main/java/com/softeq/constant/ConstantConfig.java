@@ -3,7 +3,7 @@ package com.softeq.constant;
 import java.util.Properties;
 
 public final class ConstantConfig {
-    private Properties properties;
+    private final Properties properties;
     private static ConstantConfig instance = null;
 
     private ConstantConfig (){
@@ -35,6 +35,10 @@ public final class ConstantConfig {
             result = this.properties.getProperty(key);
         }
         return result;
+    }
+
+    public Properties getProperties(){
+        return properties;
     }
 
     /* Override the clone method to ensure the "unique instance" of class*/

@@ -2,7 +2,7 @@ package com.softeq;
 
 import com.softeq.input.InputHandlerSolver;
 import com.softeq.input.SearchInput;
-import com.softeq.output.OutputHandler;
+import com.softeq.output.OutputHandlerSolver;
 import com.softeq.service.WebCrawler;
 
 public class App
@@ -14,8 +14,9 @@ public class App
         WebCrawler webCrawler = new WebCrawler();
         webCrawler.getPageLinks(searchInput, 0);
 
-        OutputHandler oh = new OutputHandler();
-        oh.printAllData(webCrawler.getSearchData());
-        oh.printTopDataToFile(webCrawler.getSearchData());
+        OutputHandlerSolver oh = new OutputHandlerSolver();
+        oh.handleOutput(webCrawler.getSearchData());
+//        oh.printAllData(webCrawler.getSearchData());
+//        oh.printTopDataToFile(webCrawler.getSearchData());
     }
 }
