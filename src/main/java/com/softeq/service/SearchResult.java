@@ -1,4 +1,4 @@
-package com.softeq;
+package com.softeq.service;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -34,7 +34,7 @@ public class SearchResult {
      * and all values from <b>hitsByWord</b> list.
      * @see SearchResult
      */
-    String toCSVStringHitsByWord(){
+    public String toCSVStringHitsByWord(){
        StringBuilder sb = new StringBuilder(this.link).append(",");
        ArrayList <Integer> hitsByWord = this.getHitsByWord();
        String hitsByWordString = hitsByWord.stream().map(Object::toString)

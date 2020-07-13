@@ -26,7 +26,7 @@ public enum Constant {
      */
     NUMBER_OF_TOP_ENTRIES_TO_PRINT(10);
 
-    private int value;
+    private final int value;
 
     Constant(int i) {
         this.value=i;

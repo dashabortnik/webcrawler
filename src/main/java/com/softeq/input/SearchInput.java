@@ -1,4 +1,4 @@
-package com.softeq;
+package com.softeq.input;
 
 import java.util.ArrayList;
 

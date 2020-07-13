@@ -1,5 +1,6 @@
 package com.softeq;
 
+import com.softeq.service.SearchResult;
 import org.junit.Assert;
 import org.junit.Test;
 

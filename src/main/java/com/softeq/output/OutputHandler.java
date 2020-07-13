@@ -1,6 +1,8 @@
-package com.softeq;
+package com.softeq.output;
 
 import com.opencsv.CSVWriter;
+import com.softeq.Constant;
+import com.softeq.service.SearchResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,7 +23,7 @@ public class OutputHandler {
      * @param searchData is a list of SearchResult objects.
      * @see SearchResult
      */
-    void printAllData(List<SearchResult> searchData) {
+    public void printAllData(List<SearchResult> searchData) {
         try (CSVWriter writer = new CSVWriter(new FileWriter("C:\\Users\\solei\\Documents\\output.csv"))){
             for (SearchResult sr : searchData) {
                 String stringFromSr = sr.toCSVStringHitsByWord();
@@ -42,7 +44,7 @@ public class OutputHandler {
      * @see SearchResult
      * @see Constant
      */
-    void printTopDataToFile(List<SearchResult> searchData){
+    public void printTopDataToFile(List<SearchResult> searchData){
 
         searchData.sort(Comparator.comparing(SearchResult::getTotalHits).reversed());
         try (CSVWriter writer = new CSVWriter(new FileWriter("C:\\Users\\solei\\Documents\\topHitsOutput.csv"))){
