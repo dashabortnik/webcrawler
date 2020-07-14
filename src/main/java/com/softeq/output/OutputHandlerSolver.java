@@ -54,7 +54,7 @@ public class OutputHandlerSolver {
                     break;
                 }
                 case "csv":{
-                    String link = ConstantConfig.getInstance().getProperty(Constant.FILE_OUTPUT_DIRECTORY);
+                    String link = ConstantConfig.getInstance().getProperty(Constant.FILE_OUTPUT_NAME_NO_EXT);
                     new CSVOutputHandler(link).printData(formattedData);
                     break;
                 }
