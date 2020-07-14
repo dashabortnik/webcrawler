@@ -93,7 +93,7 @@ public class JsonInputHandler extends AbstractFileHandler implements InputHandle
         try{
             Object obj = input.get(intString);
             if(obj!=null){
-                result = (int)(long)obj;
+                result = Integer.parseInt(obj.toString());
             }
         } catch (NumberFormatException e){
             logger.warn("Given number is not integer: " + e);

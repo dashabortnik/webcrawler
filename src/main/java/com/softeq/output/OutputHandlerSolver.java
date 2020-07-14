@@ -59,8 +59,6 @@ public class OutputHandlerSolver {
                     if(filepath==null){
                         filepath = ConstantConfig.getInstance().getProperty(Constant.FILE_OUTPUT_NAME_NO_EXT);
                     }
-                    //String link = ConstantConfig.getInstance().getProperty(Constant.FILE_OUTPUT_NAME_NO_EXT);
-                    //new CSVOutputHandler(link).printData(formattedData);
                     new CSVOutputHandler(filepath).printData(formattedData);
                     break;
                 }
