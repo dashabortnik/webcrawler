@@ -16,7 +16,6 @@ import java.util.HashSet;
 /**
  * Class for web crawling according to specified parameters.
  */
-
 public class WebCrawler {
 
     final Logger logger = LogManager.getLogger(WebCrawler.class);
@@ -106,10 +105,14 @@ public class WebCrawler {
 
                 searchData.add(new SearchResult(seed, totalHits, hitsByWord));
 
+                if(!linksOnPage.isEmpty()){
                 // For each extracted URL invoke the method getPageLinks recursively again
-                for (Element page : linksOnPage) {
-                    getPageLinks(new SearchInput(page.attr(PAGE_ATTRIBUTE_LINK_SELECTOR), linkDepth,
-                            maxPagesNumber, searchTermsList), depthCounter);
+                    for (Element page : linksOnPage) {
+                        getPageLinks(new SearchInput(page.attr(PAGE_ATTRIBUTE_LINK_SELECTOR), linkDepth,
+                                maxPagesNumber, searchTermsList), depthCounter);
+                    }
+                } else{
+                    logger.info("No links were found on the page." + seed);
                 }
             } catch (IOException e) {
                 logger.warn("Exception for '" + seed + "': " + e);

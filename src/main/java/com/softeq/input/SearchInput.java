@@ -1,6 +1,7 @@
 package com.softeq.input;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * SearchInput class is an entity for handling search input from user.
@@ -45,5 +46,21 @@ public class SearchInput {
 
     public ArrayList<String> getSearchTermsList() {
         return searchTermsList;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SearchInput that = (SearchInput) o;
+        return linkDepth == that.linkDepth &&
+                maxVisitedPagesLimit == that.maxVisitedPagesLimit &&
+                seed.equals(that.seed) &&
+                searchTermsList.equals(that.searchTermsList);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(seed, linkDepth, maxVisitedPagesLimit, searchTermsList);
     }
 }

@@ -1,0 +1,13 @@
+[{
+  	"seed": "https://stackoverflow.com/",
+	"linkDepth": 2,
+	"maxPagesLimit": 4,
+	"searchTermsString": "java, tutorial, com"
+},
+ {
+  	"seed": "https://www.onliner.by",
+  	"linkDepth": 3,
+  	"maxPagesLimit": 5,
+	"searchTermsString": "товар, ME"
+}
+]

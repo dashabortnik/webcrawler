@@ -19,8 +19,8 @@ public class InputHandlerSolver {
     public List<SearchInput> handleInput(String ... args){
         if(args.length == 0){
             //console input as no args were provided on start
-            ConsoleInputHandler uih = new ConsoleInputHandler();
-            return uih.getCrawlingParameters();
+            ConsoleInputHandler cih = new ConsoleInputHandler();
+            return cih.getCrawlingParameters();
         } else {
             //json file link was provided on start
             JsonInputHandler jih = new JsonInputHandler(args[0]);

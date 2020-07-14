@@ -99,6 +99,9 @@
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven-surefire-plugin.version}</version>
+          <configuration>
+            <argLine>-Dfile.encoding=UTF-8</argLine>
+          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
