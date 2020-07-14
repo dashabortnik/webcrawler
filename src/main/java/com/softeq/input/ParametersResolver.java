@@ -7,6 +7,9 @@ import org.apache.commons.validator.UrlValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -53,10 +56,28 @@ public class ParametersResolver {
         UrlValidator urlValidator = new UrlValidator(schemes);
         if (!urlValidator.isValid(seed)) {
             logger.warn("Provided URL " + seed + " is invalid");
-            return true;
+            //return true;
         } else {
             logger.debug("Provided URL " + seed + " is valid");
-            return false;
+            //return false;
+        }
+
+        URL u;
+        HttpURLConnection huc = null;
+        try {
+            u = new URL(seed);
+            huc = (HttpURLConnection) u.openConnection();
+            huc.setRequestMethod ("HEAD");
+            huc.connect();
+            int code = huc.getResponseCode();
+            return !(code == HttpURLConnection.HTTP_OK);
+        } catch (IOException e) {
+            logger.warn("Provided URL " + seed + " is not available: " + e);
+            return true;
+        } finally {
+            if(huc!=null) {
+                huc.disconnect();
+            }
         }
     }
 
