@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
- * Class for handling of user input for web crawling.
+ * Handler class for user input from console. Accepts a single search query.
  */
 public class ConsoleInputHandler implements InputHandler {
 
@@ -19,7 +19,7 @@ public class ConsoleInputHandler implements InputHandler {
 
     /**
      * GetCrawlingParameters method requests user input and processes it into a SearchInput object.
-     * @return returns SearchInput object
+     * @return list of SearchInput objects
      * @see SearchInput
      */
     @Override
@@ -41,9 +41,11 @@ public class ConsoleInputHandler implements InputHandler {
             } while (parametersResolver.isInvalidUrl(seed));
 
             //For searchTerms: user input is requested in form of a string of comma-separated values.
-            System.out.println("Please provide search terms separated by commas.");
-            searchTermsLine = in.nextLine();
-            logger.debug("User entered search terms: " + searchTermsLine);
+            do{
+                System.out.println("Please provide search terms separated by commas.");
+                searchTermsLine = in.nextLine();
+                logger.debug("User entered search terms: " + searchTermsLine);
+            } while (parametersResolver.isNullOrEmptyString(searchTermsLine));
 
             //For linkDepth: user input is requested in form of a positive integer.
             System.out.println("Please provide a link depth as a positive integer.");
@@ -62,7 +64,10 @@ public class ConsoleInputHandler implements InputHandler {
         }
 
         List <SearchInput> searchInputList = new ArrayList<>();
-        searchInputList.add(parametersResolver.resolveParams(seed, searchTermsLine, userLinkDepth, userMaxPagesLimit));
+        SearchInput searchInput = parametersResolver.resolveParams(seed, searchTermsLine, userLinkDepth, userMaxPagesLimit);
+        if(searchInput!=null) {
+            searchInputList.add(searchInput);
+        }
         return searchInputList;
     }
 }

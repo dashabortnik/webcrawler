@@ -39,14 +39,14 @@ public class OutputHandlerSolver {
         }
     }
 
-    public void handleOutput(ArrayList<SearchResult> searchData){
+    public void handleOutput(ArrayList<SearchResult> searchData, ArrayList<String> searchTermsList){
 
         for (OutputFormat outputFormat : outputFormatList){
 
             //deep clone search results list
             ArrayList <SearchResult> clonedSearchData = deepClone(searchData);
             //sort and choose number of entries to print
-            ArrayList<String> formattedData = new OutputDataFormatter().formatOutputData(clonedSearchData, outputFormat);
+            ArrayList<String> formattedData = new OutputDataFormatter().formatOutputData(clonedSearchData, searchTermsList, outputFormat);
 
             //choose correct OutputHandler based on type parameter
             switch(outputFormat.getType()) {

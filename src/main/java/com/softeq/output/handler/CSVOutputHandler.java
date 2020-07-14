@@ -38,7 +38,7 @@ public class CSVOutputHandler extends AbstractFileHandler implements OutputHandl
 
         try (CSVWriter writer = new CSVWriter(new FileWriter(filePath, true))){
             for (String s : stringDataList) {
-                writer.writeNext(s.split(","));
+                writer.writeNext(s.split(","), false);
             }
             writer.flush();
             logger.info("Search data was successfully entered into a file.");

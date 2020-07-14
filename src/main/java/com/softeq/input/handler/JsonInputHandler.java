@@ -12,8 +12,11 @@ import org.json.simple.parser.ParseException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+
+/**
+ * Handler class for user input from json file. Accepts multiple search queries.
+ */
 
 public class JsonInputHandler extends AbstractFileHandler implements InputHandler {
 
@@ -23,6 +26,11 @@ public class JsonInputHandler extends AbstractFileHandler implements InputHandle
         super(fileLink);
     }
 
+    /**
+     * GetCrawlingParameters method processes a file by given link into a list of search queries.
+     * @return list of SearchInput objects
+     * @see SearchInput
+     */
     @Override
     public List<SearchInput> getCrawlingParameters() {
 
@@ -38,15 +46,22 @@ public class JsonInputHandler extends AbstractFileHandler implements InputHandle
             JSONArray searchDataArray = (JSONArray) obj;
 
             for (Object o : searchDataArray) {
-                searchInput.add(parseInputParameters((JSONObject) o));
+                SearchInput searchInputTemp = parseInputParameters((JSONObject) o);
+                if(searchInputTemp!=null){
+                    searchInput.add(searchInputTemp);
+                }
             }
-
         } catch (IOException | ParseException e) {
             logger.warn("Exception while reading and parsing file: " + e);
         }
         return searchInput;
     }
 
+    /**
+     * ParseInputParameters method processes every Json object into a SearchInput object.
+     * @return SearchInput object which represents an individual search query
+     * @see SearchInput
+     */
     private SearchInput parseInputParameters(JSONObject input){
 
         ParametersResolver parametersResolver = new ParametersResolver();
@@ -54,20 +69,35 @@ public class JsonInputHandler extends AbstractFileHandler implements InputHandle
         String seed = (String) input.get("seed");
         logger.debug("1. Seed - " + seed);
 
-        int linkDepth = (int)(long) input.get("linkDepth");
+        int linkDepth;
+        linkDepth = handleInt("linkDepth", input);
         logger.debug("2. Link depth - " + linkDepth);
 
-        int maxPagesLimit = (int)(long) input.get("maxPagesLimit");
+        int maxPagesLimit;
+        maxPagesLimit = handleInt("maxPagesLimit", input);
         logger.debug("3. Max pages limit - " + maxPagesLimit);
 
         String searchTermsString = (String) input.get("searchTermsString");
         logger.debug("4. Search terms string - " + searchTermsString);
 
-        if(parametersResolver.isInvalidUrl(seed)){
-            logger.warn("Parsing of input parameters failed: invalid seed. The program is shutting down.");
-            System.exit(0);
+        if(parametersResolver.isInvalidUrl(seed) || parametersResolver.isNullOrEmptyString(searchTermsString)){
+            logger.warn("Parsing of input parameters failed: invalid seed or search terms.");
+            return null;
         }
 
         return parametersResolver.resolveParams(seed, searchTermsString, linkDepth, maxPagesLimit);
+    }
+
+    private int handleInt(String intString, JSONObject input){
+        int result = 0;
+        try{
+            Object obj = input.get(intString);
+            if(obj!=null){
+                result = (int)(long)obj;
+            }
+        } catch (NumberFormatException e){
+            logger.warn("Given number is not integer: " + e);
+        }
+        return result;
     }
 }

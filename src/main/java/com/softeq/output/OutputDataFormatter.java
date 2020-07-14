@@ -10,12 +10,18 @@ import java.util.List;
 
 public class OutputDataFormatter {
 
-    public ArrayList<String> formatOutputData(List<SearchResult> searchData, OutputFormat outputFormat){
+    public ArrayList<String> formatOutputData(List<SearchResult> searchData, ArrayList<String> searchTermsList, OutputFormat outputFormat){
 
         String sort = outputFormat.getSort();
         int entriesNumber = outputFormat.getEntriesNumber();
         ArrayList <String> stringDataList = new ArrayList<>();
 
+        //add header
+        String listString = String.join(",", searchTermsList);
+        StringBuilder sb = new StringBuilder("Link,").append(listString);
+        stringDataList.add(sb.toString());
+
+        //add data
         if (("asc").equals(sort)){
             searchData.sort(Comparator.comparing(SearchResult::getTotalHits));
         } else if (("desc").equals(sort)){
