@@ -5,18 +5,20 @@ import com.softeq.input.SearchInput;
 import com.softeq.output.OutputHandlerSolver;
 import com.softeq.service.WebCrawler;
 
+import java.util.List;
+
 public class App
 {
     public static void main( String[] args ){
 
         InputHandlerSolver inputHandlerSolver = new InputHandlerSolver();
-        SearchInput searchInput = inputHandlerSolver.handleInput(args);
-        WebCrawler webCrawler = new WebCrawler();
-        webCrawler.getPageLinks(searchInput, 0);
-
+        List<SearchInput> searchInputList = inputHandlerSolver.handleInput(args);
         OutputHandlerSolver oh = new OutputHandlerSolver();
-        oh.handleOutput(webCrawler.getSearchData());
-//        oh.printAllData(webCrawler.getSearchData());
-//        oh.printTopDataToFile(webCrawler.getSearchData());
+
+        for(SearchInput searchInput : searchInputList){
+            WebCrawler webCrawler = new WebCrawler();
+            webCrawler.getPageLinks(searchInput, 0);
+            oh.handleOutput(webCrawler.getSearchData());
+        }
     }
 }

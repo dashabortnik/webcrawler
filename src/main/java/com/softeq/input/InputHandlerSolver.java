@@ -3,9 +3,11 @@ package com.softeq.input;
 import com.softeq.input.handler.ConsoleInputHandler;
 import com.softeq.input.handler.JsonInputHandler;
 
+import java.util.List;
+
 public class InputHandlerSolver {
 
-    public SearchInput handleInput(String ... args){
+    public List<SearchInput> handleInput(String ... args){
         if(args.length == 0){
             //console input as no args were provided on start
             ConsoleInputHandler uih = new ConsoleInputHandler();

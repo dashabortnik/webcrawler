@@ -12,7 +12,6 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 /**
  * Class for web crawling according to specified parameters.

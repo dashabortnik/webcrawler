@@ -4,12 +4,16 @@ import com.softeq.input.ParametersResolver;
 import com.softeq.input.SearchInput;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class JsonInputHandler extends AbstractFileHandler implements InputHandler {
 
@@ -20,9 +24,9 @@ public class JsonInputHandler extends AbstractFileHandler implements InputHandle
     }
 
     @Override
-    public SearchInput getCrawlingParameters() {
+    public List<SearchInput> getCrawlingParameters() {
 
-        SearchInput searchInput = null;
+        ArrayList <SearchInput> searchInput = new ArrayList<>();
         //JSON parser object to parse read file
         JSONParser jsonParser = new JSONParser();
 
@@ -30,8 +34,12 @@ public class JsonInputHandler extends AbstractFileHandler implements InputHandle
         {
             //Read JSON file
             Object obj = jsonParser.parse(reader);
-            JSONObject jsonObject = (JSONObject) obj;
-            searchInput = parseInputParameters(jsonObject);
+
+            JSONArray searchDataArray = (JSONArray) obj;
+
+            for (Object o : searchDataArray) {
+                searchInput.add(parseInputParameters((JSONObject) o));
+            }
 
         } catch (IOException | ParseException e) {
             logger.warn("Exception while reading and parsing file: " + e);

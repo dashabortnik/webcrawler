@@ -5,6 +5,8 @@ import com.softeq.input.SearchInput;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -21,7 +23,7 @@ public class ConsoleInputHandler implements InputHandler {
      * @see SearchInput
      */
     @Override
-    public SearchInput getCrawlingParameters(){
+    public List<SearchInput> getCrawlingParameters(){
 
         String seed = null;
         int userLinkDepth = 0;
@@ -58,6 +60,9 @@ public class ConsoleInputHandler implements InputHandler {
         } catch (Exception e) {
             logger.warn("Exception occurred during scanner input. " + e);
         }
-        return parametersResolver.resolveParams(seed, searchTermsLine, userLinkDepth, userMaxPagesLimit);
+
+        List <SearchInput> searchInputList = new ArrayList<>();
+        searchInputList.add(parametersResolver.resolveParams(seed, searchTermsLine, userLinkDepth, userMaxPagesLimit));
+        return searchInputList;
     }
 }

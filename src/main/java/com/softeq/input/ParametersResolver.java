@@ -18,13 +18,11 @@ public class ParametersResolver {
     public SearchInput resolveParams(String seed, String searchTermsLine, int linkDepth, int maxPagesLimit){
 
         int inputLinkDepth = Integer.parseInt(ConstantConfig.getInstance().getProperty(Constant.DEF_LINK_DEPTH));
-        logger.debug("Default depth:" + inputLinkDepth);
         if (linkDepth>0){
             inputLinkDepth = linkDepth;
         }
 
         int inputMaxPagesLimit = Integer.parseInt(ConstantConfig.getInstance().getProperty(Constant.DEF_VISITED_PAGES_LIMIT));
-        logger.debug("Default page limit:" + inputMaxPagesLimit);
         if (maxPagesLimit>0){
             inputMaxPagesLimit = maxPagesLimit;
         }
