@@ -33,7 +33,8 @@ public class OutputHandlerSolver {
                     logger.warn("Exception when parsing String into entriesNumber: " + e);
                 }
                 String sort = (String)props.get(String.format("output.%d.sort",i));
-                outputFormatList.add(new OutputFormat(type, entriesNumber, sort));
+                String filepath = (String)props.get(String.format("output.%d.filepath",i));
+                outputFormatList.add(new OutputFormat(type, entriesNumber, sort, filepath));
             }
         }
     }
@@ -54,8 +55,13 @@ public class OutputHandlerSolver {
                     break;
                 }
                 case "csv":{
-                    String link = ConstantConfig.getInstance().getProperty(Constant.FILE_OUTPUT_NAME_NO_EXT);
-                    new CSVOutputHandler(link).printData(formattedData);
+                    String filepath = outputFormat.getFilepath();
+                    if(filepath==null){
+                        filepath = ConstantConfig.getInstance().getProperty(Constant.FILE_OUTPUT_NAME_NO_EXT);
+                    }
+                    //String link = ConstantConfig.getInstance().getProperty(Constant.FILE_OUTPUT_NAME_NO_EXT);
+                    //new CSVOutputHandler(link).printData(formattedData);
+                    new CSVOutputHandler(filepath).printData(formattedData);
                     break;
                 }
             }
