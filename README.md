@@ -28,10 +28,12 @@ anothersite.com/page3.html 0 1 0 1 2
 ## Installation
 1. Clone the project from repository. 
 2. Change paths in properties files:  
-    2.1 File "src\main\resources\constant.properties"
+   2.1. File "src\main\resources\constant.properties"  
         2.1.1. file.output.name.no.ext - default path (used if no other is specified)  
         2.1.2. Set necessary output parameters with correct paths in section "#output parameters".  
-3. Prepare output parameters by copying sample data above into a .txt file.  
+   2.2. File "src\test\resources\test.properties"  
+      	Set parameters "filepath1" and "filepath2" as desired output directories with filenames.  
+3. Prepare output parameters by copying sample data above into a .txt file or taking a file inputDataArray.txt from "src\test\resources".   
 4. Open cmd in project root directory.  
 5. Run one of the following scripts:  
 - for input of args from command line  
