@@ -28,18 +28,18 @@ public class JsonInputHandler extends AbstractFileHandler implements InputHandle
 
     /**
      * GetCrawlingParameters method processes a file by given link into a list of search queries.
+     *
      * @return list of SearchInput objects
      * @see SearchInput
      */
     @Override
     public List<SearchInput> getCrawlingParameters() {
 
-        ArrayList <SearchInput> searchInput = new ArrayList<>();
+        ArrayList<SearchInput> searchInput = new ArrayList<>();
         //JSON parser object to parse read file
         JSONParser jsonParser = new JSONParser();
 
-        try (FileReader reader = new FileReader(this.getFileLink()))
-        {
+        try (FileReader reader = new FileReader(this.getFileLink())) {
             //Read JSON file
             Object obj = jsonParser.parse(reader);
 
@@ -47,7 +47,7 @@ public class JsonInputHandler extends AbstractFileHandler implements InputHandle
 
             for (Object o : searchDataArray) {
                 SearchInput searchInputTemp = parseInputParameters((JSONObject) o);
-                if(searchInputTemp!=null){
+                if (searchInputTemp != null) {
                     searchInput.add(searchInputTemp);
                 }
             }
@@ -59,10 +59,11 @@ public class JsonInputHandler extends AbstractFileHandler implements InputHandle
 
     /**
      * ParseInputParameters method processes every Json object into a SearchInput object.
+     *
      * @return SearchInput object which represents an individual search query
      * @see SearchInput
      */
-    private SearchInput parseInputParameters(JSONObject input){
+    private SearchInput parseInputParameters(JSONObject input) {
 
         ParametersResolver parametersResolver = new ParametersResolver();
 
@@ -80,7 +81,7 @@ public class JsonInputHandler extends AbstractFileHandler implements InputHandle
         String searchTermsString = (String) input.get("searchTermsString");
         logger.debug("4. Search terms string - " + searchTermsString);
 
-        if(parametersResolver.isInvalidUrl(seed) || parametersResolver.isNullOrEmptyString(searchTermsString)){
+        if (parametersResolver.isInvalidUrl(seed) || parametersResolver.isNullOrEmptyString(searchTermsString)) {
             logger.warn("Parsing of input parameters failed: invalid seed or search terms.");
             return null;
         }
@@ -88,14 +89,14 @@ public class JsonInputHandler extends AbstractFileHandler implements InputHandle
         return parametersResolver.resolveParams(seed, searchTermsString, linkDepth, maxPagesLimit);
     }
 
-    private int handleInt(String intString, JSONObject input){
+    private int handleInt(String intString, JSONObject input) {
         int result = 0;
-        try{
+        try {
             Object obj = input.get(intString);
-            if(obj!=null){
+            if (obj != null) {
                 result = Integer.parseInt(obj.toString());
             }
-        } catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             logger.warn("Given number is not integer: " + e);
         }
         return result;

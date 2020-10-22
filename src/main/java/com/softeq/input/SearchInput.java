@@ -23,7 +23,7 @@ public class SearchInput {
     /**
      * Field searchTermsList contains search terms specified by user which need to be counted on every page.
      */
-    private final ArrayList <String> searchTermsList;
+    private final ArrayList<String> searchTermsList;
 
     public SearchInput(String seed, int linkDepth, int maxVisitedPagesLimit, ArrayList<String> searchTermsList) {
         this.seed = seed;
@@ -54,9 +54,9 @@ public class SearchInput {
         if (o == null || getClass() != o.getClass()) return false;
         SearchInput that = (SearchInput) o;
         return linkDepth == that.linkDepth &&
-                maxVisitedPagesLimit == that.maxVisitedPagesLimit &&
-                seed.equals(that.seed) &&
-                searchTermsList.equals(that.searchTermsList);
+            maxVisitedPagesLimit == that.maxVisitedPagesLimit &&
+            seed.equals(that.seed) &&
+            searchTermsList.equals(that.searchTermsList);
     }
 
     @Override

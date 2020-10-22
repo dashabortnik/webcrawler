@@ -1,11 +1,9 @@
 package com.softeq;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -15,7 +13,7 @@ import java.util.Properties;
 import static org.junit.Assert.assertTrue;
 
 
-public class AppTest{
+public class AppTest {
 
     private String fileName1;
     private String fileName2;
@@ -30,9 +28,8 @@ public class AppTest{
     }
 
     @Test
-    public void integrationTest(){
-        App app = new App();
-        app.main(new String[]{"src/test/resources/inputDataArray.txt"});
+    public void integrationTest() {
+        App.main(new String[]{"src/test/resources/inputDataArray.txt"});
 
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
         String pathToFile1 = new StringBuilder(fileName1).append(date).append(".csv").toString();
@@ -41,7 +38,7 @@ public class AppTest{
         File file2 = new File(pathToFile2);
         assertTrue(file1.exists());
         assertTrue(file2.exists());
-        assertTrue(file1.length()!=0);
-        assertTrue(file2.length()!=0);
+        assertTrue(file1.length() != 0);
+        assertTrue(file2.length() != 0);
     }
 }

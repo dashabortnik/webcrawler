@@ -9,15 +9,18 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class App{
-    public static void main( String[] args ){
+public class App {
+    public static void main(String[] args) {
 
         Logger logger = LogManager.getLogger(App.class);
 
         InputHandlerSolver inputHandlerSolver = new InputHandlerSolver();
         List<SearchInput> searchInputList = inputHandlerSolver.handleInput(args);
 
-        if(!searchInputList.isEmpty()) {
+        if (searchInputList.isEmpty()) {
+            logger.warn("Not enough data was provided for web crawling. The app is shutting down.");
+            System.exit(0);
+        } else {
             OutputHandlerSolver oh = new OutputHandlerSolver();
 
             for (SearchInput searchInput : searchInputList) {
@@ -25,9 +28,6 @@ public class App{
                 webCrawler.getPageLinks(searchInput, 0);
                 oh.handleOutput(webCrawler.getSearchData(), searchInput.getSearchTermsList());
             }
-        } else {
-            logger.warn("Not enough data was provided for web crawling. The app is shutting down.");
-            System.exit(0);
         }
     }
 }

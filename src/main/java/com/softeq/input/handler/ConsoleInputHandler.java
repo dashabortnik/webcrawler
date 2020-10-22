@@ -19,11 +19,12 @@ public class ConsoleInputHandler implements InputHandler {
 
     /**
      * GetCrawlingParameters method requests user input and processes it into a SearchInput object.
+     *
      * @return list of SearchInput objects
      * @see SearchInput
      */
     @Override
-    public List<SearchInput> getCrawlingParameters(){
+    public List<SearchInput> getCrawlingParameters() {
 
         String seed = null;
         int userLinkDepth = 0;
@@ -31,17 +32,17 @@ public class ConsoleInputHandler implements InputHandler {
         String searchTermsLine = null;
         ParametersResolver parametersResolver = new ParametersResolver();
 
-        try (Scanner in = new Scanner(System.in)){
+        try (Scanner in = new Scanner(System.in)) {
 
             //For seed: user input is requested until URL validity check in method <b>isValidUrl</b> returns true.
-            do{
+            do {
                 System.out.println("Please provide a starting URL (seed) for web crawling.");
                 seed = in.nextLine();
                 logger.debug("User entered seed: " + seed);
             } while (parametersResolver.isInvalidUrl(seed));
 
             //For searchTerms: user input is requested in form of a string of comma-separated values.
-            do{
+            do {
                 System.out.println("Please provide search terms separated by commas.");
                 searchTermsLine = in.nextLine();
                 logger.debug("User entered search terms: " + searchTermsLine);
@@ -63,9 +64,9 @@ public class ConsoleInputHandler implements InputHandler {
             logger.warn("Exception occurred during scanner input. " + e);
         }
 
-        List <SearchInput> searchInputList = new ArrayList<>();
+        List<SearchInput> searchInputList = new ArrayList<>();
         SearchInput searchInput = parametersResolver.resolveParams(seed, searchTermsLine, userLinkDepth, userMaxPagesLimit);
-        if(searchInput!=null) {
+        if (searchInput != null) {
             searchInputList.add(searchInput);
         }
         return searchInputList;

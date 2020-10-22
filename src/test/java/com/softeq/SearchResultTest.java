@@ -16,6 +16,6 @@ public class SearchResultTest extends TestCase {
         Assert.assertNotNull(result);
         Assert.assertFalse(result.isEmpty());
         Assert.assertEquals("Output should contain a link and hitsByWord as comma-separated values.",
-                "https://github.com/,1,0,4,5", result);
+            "https://github.com/,1,0,4,5", result);
     }
 }

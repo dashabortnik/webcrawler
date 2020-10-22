@@ -20,7 +20,7 @@ public class SearchResult {
     /**
      * Field hitsByWord contains a list of individual appearances of every search word on this page.
      */
-    private final ArrayList <Integer> hitsByWord;
+    private final ArrayList<Integer> hitsByWord;
 
     public SearchResult(String link, int totalHits, ArrayList<Integer> hitsByWord) {
         this.link = link;
@@ -30,17 +30,18 @@ public class SearchResult {
 
     /**
      * ToCSVStringHitsByWord method turns data from SearchResult object into a specified format for CSV file.
+     *
      * @return returns a string of comma-separated values which contain <b>link </b>
      * and all values from <b>hitsByWord</b> list.
      * @see SearchResult
      */
-    public String toCSVStringHitsByWord(){
-       StringBuilder sb = new StringBuilder(this.link).append(",");
-       ArrayList <Integer> hitsByWord = this.getHitsByWord();
-       String hitsByWordString = hitsByWord.stream().map(Object::toString)
-               .collect(Collectors.joining(","));
-       sb.append(hitsByWordString);
-       return sb.toString();
+    public String toCSVStringHitsByWord() {
+        StringBuilder sb = new StringBuilder(this.link).append(",");
+        ArrayList<Integer> hitsByWord = this.getHitsByWord();
+        String hitsByWordString = hitsByWord.stream().map(Object::toString)
+            .collect(Collectors.joining(","));
+        sb.append(hitsByWordString);
+        return sb.toString();
     }
 
     public String getLink() {

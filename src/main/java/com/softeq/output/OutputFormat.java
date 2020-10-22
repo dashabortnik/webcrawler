@@ -9,7 +9,7 @@ public class OutputFormat {
 
     public OutputFormat(String type, Integer entriesNumber, String sort, String filepath) {
         this.type = type;
-        if(entriesNumber!=null){
+        if (entriesNumber != null) {
             this.entriesNumber = entriesNumber;
         }
         this.sort = sort;

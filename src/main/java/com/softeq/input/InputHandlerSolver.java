@@ -13,11 +13,12 @@ public class InputHandlerSolver {
 
     /**
      * HandleInput method checks if any arguments were provided at the start of the app and calls a suitable handler.
+     *
      * @return a list of objects with search parameters
      * @see SearchInput
      */
-    public List<SearchInput> handleInput(String ... args){
-        if(args.length == 0){
+    public List<SearchInput> handleInput(String... args) {
+        if (args.length == 0) {
             //console input as no args were provided on start
             ConsoleInputHandler cih = new ConsoleInputHandler();
             return cih.getCrawlingParameters();

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ConsoleInputHandlerTest{
+public class ConsoleInputHandlerTest {
 
     @Test
     public void testGetCrawlingParameters() {

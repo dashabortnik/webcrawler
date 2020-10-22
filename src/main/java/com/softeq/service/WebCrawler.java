@@ -48,9 +48,10 @@ public class WebCrawler {
     /**
      * Method getPageLinks fetches HTML code of the page, parses it into a String, counts matches for all search terms
      * in searchTermsList, extracts all links from the page and follows them recursively.
-     * @param searchInput contains all search parameters specified by user
+     *
+     * @param searchInput  contains all search parameters specified by user
      * @param depthCounter counts the depth of web crawling
-     * which is the length of chain of hits if a web crawler follows 1 link from each page.
+     *                     which is the length of chain of hits if a web crawler follows 1 link from each page.
      */
     public void getPageLinks(SearchInput searchInput, int depthCounter) {
 
@@ -59,13 +60,13 @@ public class WebCrawler {
         String seed = searchInput.getSeed();
         final int linkDepth = searchInput.getLinkDepth();
         final int maxPagesNumber = searchInput.getMaxVisitedPagesLimit();
-        ArrayList <String> searchTermsList = searchInput.getSearchTermsList();
+        ArrayList<String> searchTermsList = searchInput.getSearchTermsList();
 
         /* Field totalHits counts a sum of hits for all search terms on this page.*/
         int totalHits = 0;
 
         /*Field hitsByWord contains a list of individual appearances of every search word on this page.*/
-        ArrayList <Integer> hitsByWord = new ArrayList<>();
+        ArrayList<Integer> hitsByWord = new ArrayList<>();
 
         // Check if you have already crawled the URLs
         if (!links.contains(seed) && (depthCounter < linkDepth) && visitedPagesCounter < maxPagesNumber) {
@@ -87,8 +88,8 @@ public class WebCrawler {
                 String parsedText = Jsoup.parse(html, seed).text().toLowerCase();
 
                 //count occurrences of given search words in the text
-                for (String searchWord : searchTermsList){
-                    int number = StringUtils.countMatches (parsedText, searchWord.toLowerCase());
+                for (String searchWord : searchTermsList) {
+                    int number = StringUtils.countMatches(parsedText, searchWord.toLowerCase());
                     logger.debug("Count of phrase <" + searchWord + "> is: " + number);
 
                     //add to list of hits for this link
@@ -105,14 +106,14 @@ public class WebCrawler {
 
                 searchData.add(new SearchResult(seed, totalHits, hitsByWord));
 
-                if(!linksOnPage.isEmpty()){
-                // For each extracted URL invoke the method getPageLinks recursively again
+                if (linksOnPage.isEmpty()) {
+                    logger.info("No links were found on the page." + seed);
+                } else {
+                    // For each extracted URL invoke the method getPageLinks recursively again
                     for (Element page : linksOnPage) {
                         getPageLinks(new SearchInput(page.attr(PAGE_ATTRIBUTE_LINK_SELECTOR), linkDepth,
-                                maxPagesNumber, searchTermsList), depthCounter);
+                            maxPagesNumber, searchTermsList), depthCounter);
                     }
-                } else{
-                    logger.info("No links were found on the page." + seed);
                 }
             } catch (IOException e) {
                 logger.warn("Exception for '" + seed + "': " + e);

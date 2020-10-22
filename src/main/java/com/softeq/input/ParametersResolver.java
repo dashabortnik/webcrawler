@@ -22,44 +22,43 @@ public class ParametersResolver {
 
     /**
      * ResolveParams method receives input data from user and checks its validity.
-     * @param seed is start page
+     *
+     * @param seed            is start page
      * @param searchTermsLine contains search terms separated by commas
-     * @param linkDepth is number of moves to a new page in depth
-     * @param maxPagesLimit is max number of moves
+     * @param linkDepth       is number of moves to a new page in depth
+     * @param maxPagesLimit   is max number of moves
      * @return SearchInput object with corrected data
      */
-    public SearchInput resolveParams(String seed, String searchTermsLine, int linkDepth, int maxPagesLimit){
+    public SearchInput resolveParams(String seed, String searchTermsLine, int linkDepth, int maxPagesLimit) {
 
         int inputLinkDepth = Integer.parseInt(ConstantConfig.getInstance().getProperty(Constant.DEF_LINK_DEPTH));
-        if (linkDepth>0){
+        if (linkDepth > 0) {
             inputLinkDepth = linkDepth;
         }
 
         int inputMaxPagesLimit = Integer.parseInt(ConstantConfig.getInstance().getProperty(Constant.DEF_VISITED_PAGES_LIMIT));
-        if (maxPagesLimit>0){
+        if (maxPagesLimit > 0) {
             inputMaxPagesLimit = maxPagesLimit;
         }
 
         /* If input data is valid, a string of search terms is parsed into an array trimming extra spaces
           and converted into a list. All input data is used to create a SearchInput object.*/
-        if (!StringUtils.isEmpty(seed) && !StringUtils.isEmpty(searchTermsLine)){
-            ArrayList<String> searchTermsList = new ArrayList<>(Arrays.asList(StringUtils.stripAll(searchTermsLine.split(","))));
-            return new SearchInput(seed, inputLinkDepth, inputMaxPagesLimit, searchTermsList);
-        } else {
+        if (StringUtils.isEmpty(seed) || StringUtils.isEmpty(searchTermsLine)) {
             logger.warn("Not enough data was provided to ParametersResolver: either seed or search terms are empty.");
             return null;
+        } else {
+            ArrayList<String> searchTermsList = new ArrayList<>(Arrays.asList(StringUtils.stripAll(searchTermsLine.split(","))));
+            return new SearchInput(seed, inputLinkDepth, inputMaxPagesLimit, searchTermsList);
         }
     }
 
-    public boolean isInvalidUrl(String seed){
-        String[] schemes = {"http","https"};
+    public boolean isInvalidUrl(String seed) {
+        String[] schemes = {"http", "https"};
         UrlValidator urlValidator = new UrlValidator(schemes);
-        if (!urlValidator.isValid(seed)) {
-            logger.warn("Provided URL " + seed + " is invalid");
-            //return true;
-        } else {
+        if (urlValidator.isValid(seed)) {
             logger.debug("Provided URL " + seed + " is valid");
-            //return false;
+        } else {
+            logger.warn("Provided URL " + seed + " is invalid");
         }
 
         URL u;
@@ -67,7 +66,7 @@ public class ParametersResolver {
         try {
             u = new URL(seed);
             huc = (HttpURLConnection) u.openConnection();
-            huc.setRequestMethod ("HEAD");
+            huc.setRequestMethod("HEAD");
             huc.connect();
             int code = huc.getResponseCode();
             return !(code == HttpURLConnection.HTTP_OK);
@@ -75,14 +74,14 @@ public class ParametersResolver {
             logger.warn("Provided URL " + seed + " is not available: " + e);
             return true;
         } finally {
-            if(huc!=null) {
+            if (huc != null) {
                 huc.disconnect();
             }
         }
     }
 
-    public boolean isNullOrEmptyString(String searchTerm){
-        if (searchTerm==null || searchTerm.trim().isEmpty()) {
+    public boolean isNullOrEmptyString(String searchTerm) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
             logger.warn("Provided search terms are empty.");
             return true;
         } else {

@@ -6,38 +6,38 @@ public final class ConstantConfig {
     private final Properties properties;
     private static ConstantConfig instance = null;
 
-    private ConstantConfig (){
+    private ConstantConfig() {
         this.properties = new Properties();
-        try{
+        try {
             properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(Constant.CONSTANT_CONF_LINK));
-        }catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    private synchronized static void createInstance () {
+    private synchronized static void createInstance() {
         if (instance == null) {
             instance = new ConstantConfig();
         }
     }
 
     // Uses singleton pattern to guarantee the creation of only one instance
-    public static ConstantConfig getInstance(){
-        if(instance == null) {
+    public static ConstantConfig getInstance() {
+        if (instance == null) {
             createInstance();
         }
         return instance;
     }
 
-    public String getProperty(String key){
+    public String getProperty(String key) {
         String result = null;
-        if(key !=null && !key.trim().isEmpty()){
+        if (key != null && !key.trim().isEmpty()) {
             result = this.properties.getProperty(key);
         }
         return result;
     }
 
-    public Properties getProperties(){
+    public Properties getProperties() {
         return properties;
     }
 

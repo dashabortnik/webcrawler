@@ -1,6 +1,7 @@
 package com.softeq.input.handler;
 
 import com.softeq.input.SearchInput;
+
 import java.util.List;
 
 /**
@@ -10,6 +11,7 @@ public interface InputHandler {
 
     /**
      * GetCrawlingParameters gets search parameters from available source.
+     *
      * @return a list where every item represents an individual search query
      */
     List<SearchInput> getCrawlingParameters();

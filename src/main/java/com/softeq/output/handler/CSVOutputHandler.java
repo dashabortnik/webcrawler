@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class CSVOutputHandler extends AbstractFileHandler implements OutputHandler{
+public class CSVOutputHandler extends AbstractFileHandler implements OutputHandler {
 
     Logger logger = LogManager.getLogger(CSVOutputHandler.class);
 
@@ -36,7 +36,7 @@ public class CSVOutputHandler extends AbstractFileHandler implements OutputHandl
             }
         }
 
-        try (CSVWriter writer = new CSVWriter(new FileWriter(filePath, true))){
+        try (CSVWriter writer = new CSVWriter(new FileWriter(filePath, true))) {
             for (String s : stringDataList) {
                 writer.writeNext(s.split(","), false);
             }
