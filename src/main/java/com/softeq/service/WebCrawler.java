@@ -87,18 +87,7 @@ public class WebCrawler {
                 String html = document.body().toString();
                 String parsedText = Jsoup.parse(html, seed).text().toLowerCase();
 
-                //count occurrences of given search words in the text
-                for (String searchWord : searchTermsList) {
-                    int number = StringUtils.countMatches(parsedText, searchWord.toLowerCase());
-                    logger.debug("Count of phrase <" + searchWord + "> is: " + number);
-
-                    //add to list of hits for this link
-                    hitsByWord.add(number);
-
-                    //add to sum of all hits for this link
-                    totalHits = totalHits + number;
-                    logger.debug("Total hits: " + totalHits);
-                }
+                totalHits = countWordMatches(searchTermsList, hitsByWord, parsedText);
 
                 // Parse the HTML to extract links to other URLs
                 Elements linksOnPage = document.select(CSS_LINK_SELECTOR);
@@ -120,4 +109,23 @@ public class WebCrawler {
             }
         }
     }
+
+    private int countWordMatches(ArrayList<String> searchTermsList, ArrayList<Integer> hitsByWord, String parsedText){
+        int totalHitsNumber = 0;
+
+        //count occurrences of given search words in the text
+        for (String searchWord : searchTermsList) {
+            int number = StringUtils.countMatches(parsedText, searchWord.toLowerCase());
+            logger.debug("Count of phrase <" + searchWord + "> is: " + number);
+
+            //add to list of hits for this link
+            hitsByWord.add(number);
+
+            //add to sum of all hits for this link
+            totalHitsNumber = totalHitsNumber + number;
+            logger.debug("Total hits: " + totalHitsNumber);
+        }
+        return totalHitsNumber;
+    }
+
 }
