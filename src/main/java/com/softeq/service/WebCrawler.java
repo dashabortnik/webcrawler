@@ -63,7 +63,7 @@ public class WebCrawler {
         ArrayList<String> searchTermsList = searchInput.getSearchTermsList();
 
         /* Field totalHits counts a sum of hits for all search terms on this page.*/
-        int totalHits = 0;
+        int totalHits;
 
         /*Field hitsByWord contains a list of individual appearances of every search word on this page.*/
         ArrayList<Integer> hitsByWord = new ArrayList<>();

@@ -23,7 +23,7 @@ public class CSVOutputHandler extends AbstractFileHandler implements OutputHandl
     @Override
     public void printData(ArrayList<String> stringDataList) {
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String filePath = new StringBuilder(this.getFileLink()).append(date).append(".csv").toString();
+        String filePath = this.getFileLink() + date + ".csv";
 
         File file = new File(filePath);
         if (!file.exists()) {

@@ -18,8 +18,7 @@ public class OutputDataFormatter {
 
         //add header
         String listString = String.join(",", searchTermsList);
-        StringBuilder sb = new StringBuilder("Link,").append(listString);
-        stringDataList.add(sb.toString());
+        stringDataList.add("Link," + listString);
 
         //add data
         if (("asc").equals(sort)) {

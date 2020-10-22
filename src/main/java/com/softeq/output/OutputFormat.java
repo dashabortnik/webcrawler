@@ -2,10 +2,10 @@ package com.softeq.output;
 
 public class OutputFormat {
 
-    private String type;
+    private final String type;
     private int entriesNumber = 0;
-    private String sort;
-    private String filepath;
+    private final String sort;
+    private final String filepath;
 
     public OutputFormat(String type, Integer entriesNumber, String sort, String filepath) {
         this.type = type;
