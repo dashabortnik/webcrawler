@@ -9,6 +9,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,54 +63,33 @@ public class ParametersResolver {
             logger.warn("Provided URL " + seed + " is invalid");
         }
 
-        URL u;
-        HttpURLConnection huc = null;
-        try {
-            u = new URL(seed);
-            huc = (HttpURLConnection) u.openConnection();
-            huc.setRequestMethod("HEAD");
-            huc.connect();
-            int code = huc.getResponseCode();
-
-            System.out.println("CODE="+code);
-            ///////////////////////////////////////////////////////////
-            boolean redirect = false;
-            if (code != HttpURLConnection.HTTP_OK) {
-                if (code == HttpURLConnection.HTTP_MOVED_TEMP
-                    || code == HttpURLConnection.HTTP_MOVED_PERM
-                    || code == HttpURLConnection.HTTP_SEE_OTHER)
-                    redirect = true;
-            }
-
-            if (redirect) {
-
-                // get redirect url from "location" header field
-                String newUrl = huc.getHeaderField("Location");
-
-                // open the new connection again
-                huc = (HttpURLConnection) new URL(newUrl).openConnection();
-                System.out.println("Redirect to URL : " + newUrl);
+        final int maxConnAttempts = 3;
+        int connAttempts = 0;
+        int code;
+        do {
+            URL u;
+            HttpURLConnection huc;
+            try {
+                u = new URL(seed);
+                huc = (HttpURLConnection) u.openConnection();
                 huc.setRequestMethod("HEAD");
                 huc.connect();
-                int statusCode = huc.getResponseCode();
-                System.out.println("Response code: " + statusCode);
-                System.out.println(!(statusCode==HttpURLConnection.HTTP_OK));
-                return !(statusCode==HttpURLConnection.HTTP_OK);
-            } else {
-                System.out.println(!(code==HttpURLConnection.HTTP_OK));
-                return !(code==HttpURLConnection.HTTP_OK);
-            }
+                code = huc.getResponseCode();
+                ++connAttempts;
+                System.out.println("CODE=" + code);
+                if (code == HttpURLConnection.HTTP_MOVED_TEMP
+                    || code == HttpURLConnection.HTTP_MOVED_PERM
+                    || code == HttpURLConnection.HTTP_SEE_OTHER) {
+                    seed = huc.getHeaderField("Location");
 
-//////////////////////////////////////////////////////////////////////////////
-            //return !(code == HttpURLConnection.HTTP_OK);
-        } catch (IOException e) {
-            logger.warn("Provided URL " + seed + " is not available: " + e);
-            return true;
-        } finally {
-            if (huc != null) {
-                huc.disconnect();
+                    System.out.println("New seed: " + seed + " \nConnection attempts: " + connAttempts);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                return true;
             }
-        }
+        } while (code != HttpURLConnection.HTTP_OK && connAttempts <= maxConnAttempts);
+        return !(code==HttpURLConnection.HTTP_OK);
     }
 
     public boolean isNullOrEmptyString(String searchTerm) {

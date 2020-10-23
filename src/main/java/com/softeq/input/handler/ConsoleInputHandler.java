@@ -1,5 +1,6 @@
 package com.softeq.input.handler;
 
+import com.softeq.input.LinkNormalizer;
 import com.softeq.input.ParametersResolver;
 import com.softeq.input.SearchInput;
 import org.apache.logging.log4j.LogManager;
@@ -9,8 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-
-import com.shekhargulati.urlcleaner.UrlCleaner;
 
 /**
  * Handler class for user input from console. Accepts a single search query.
@@ -41,8 +40,12 @@ public class ConsoleInputHandler implements InputHandler {
                 System.out.println("Please provide a starting URL (seed) for web crawling.");
                 seed = in.nextLine();
                 logger.debug("User entered seed: " + seed);
-//                seed = UrlCleaner.normalizeUrl(seed);
-//                logger.debug("Normalized seed: " + seed);
+
+                //use LinkNormalizer which adds http, if missing, and normalizes the URL
+                LinkNormalizer ln = new LinkNormalizer();
+                seed = ln.normalizeUrl(seed);
+
+                logger.debug("Normalized seed: " + seed);
             } while (parametersResolver.isInvalidUrl(seed));
 
             //For searchTerms: user input is requested in form of a string of comma-separated values.
@@ -75,4 +78,8 @@ public class ConsoleInputHandler implements InputHandler {
         }
         return searchInputList;
     }
+
+
+
+
 }
