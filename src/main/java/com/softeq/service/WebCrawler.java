@@ -1,5 +1,6 @@
 package com.softeq.service;
 
+import com.softeq.input.LinkNormalizer;
 import com.softeq.input.SearchInput;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -57,7 +58,11 @@ public class WebCrawler {
 
         /* Fields <b>seed</b>, <b>linkDepth</b>, <b>maxPagesNumber</b>,<b>searchTermsList</b> are extracted from
           SearchInput object and contain search parameters provided by user. */
-        String seed = searchInput.getSeed();
+
+        //use LinkNormalizer which adds http, if missing, and normalizes the URL
+        LinkNormalizer ln = new LinkNormalizer();
+        String seed = ln.normalizeUrl(searchInput.getSeed());
+
         final int linkDepth = searchInput.getLinkDepth();
         final int maxPagesNumber = searchInput.getMaxVisitedPagesLimit();
         ArrayList<String> searchTermsList = searchInput.getSearchTermsList();

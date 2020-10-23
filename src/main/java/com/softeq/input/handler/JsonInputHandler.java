@@ -1,5 +1,6 @@
 package com.softeq.input.handler;
 
+import com.softeq.input.LinkNormalizer;
 import com.softeq.input.ParametersResolver;
 import com.softeq.input.SearchInput;
 import org.apache.logging.log4j.LogManager;
@@ -69,6 +70,10 @@ public class JsonInputHandler extends AbstractFileHandler implements InputHandle
 
         String seed = (String) input.get("seed");
         logger.debug("1. Seed - " + seed);
+        //use LinkNormalizer which adds http, if missing, and normalizes the URL
+        LinkNormalizer ln = new LinkNormalizer();
+        seed = ln.normalizeUrl(seed);
+        logger.debug("Normalized seed - " + seed);
 
         int linkDepth;
         linkDepth = handleInt("linkDepth", input);
