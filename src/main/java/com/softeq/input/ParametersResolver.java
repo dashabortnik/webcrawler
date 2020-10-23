@@ -69,24 +69,8 @@ public class ParametersResolver {
         int connAttempts = 0;
         int code;
         do {
-//            URL u;
             HttpURLConnection huc;
             try {
-//                u = new URL(seed);
-//                huc = (HttpURLConnection) u.openConnection();
-//                huc.setRequestMethod("HEAD");
-//                huc.connect();
-//                code = huc.getResponseCode();
-//                ++connAttempts;
-//                System.out.println("CODE=" + code);
-
-//                if (code == HttpURLConnection.HTTP_MOVED_TEMP
-//                    || code == HttpURLConnection.HTTP_MOVED_PERM
-//                    || code == HttpURLConnection.HTTP_SEE_OTHER) {
-//                    seed = huc.getHeaderField("Location");
-//
-//                    System.out.println("New seed: " + seed + " \nConnection attempts: " + connAttempts);
-//                }
                 URL u = new URL(seed);
                 huc = (HttpURLConnection) u.openConnection();
                 code = checkConnection(seed, huc);
