@@ -15,6 +15,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static java.net.HttpURLConnection.*;
+
 /**
  * Class for checking and processing input data which prepares it for web crawler.
  */
@@ -67,28 +69,61 @@ public class ParametersResolver {
         int connAttempts = 0;
         int code;
         do {
-            URL u;
+//            URL u;
             HttpURLConnection huc;
             try {
-                u = new URL(seed);
+//                u = new URL(seed);
+//                huc = (HttpURLConnection) u.openConnection();
+//                huc.setRequestMethod("HEAD");
+//                huc.connect();
+//                code = huc.getResponseCode();
+//                ++connAttempts;
+//                System.out.println("CODE=" + code);
+
+//                if (code == HttpURLConnection.HTTP_MOVED_TEMP
+//                    || code == HttpURLConnection.HTTP_MOVED_PERM
+//                    || code == HttpURLConnection.HTTP_SEE_OTHER) {
+//                    seed = huc.getHeaderField("Location");
+//
+//                    System.out.println("New seed: " + seed + " \nConnection attempts: " + connAttempts);
+//                }
+                URL u = new URL(seed);
                 huc = (HttpURLConnection) u.openConnection();
-                huc.setRequestMethod("HEAD");
-                huc.connect();
-                code = huc.getResponseCode();
+                code = checkConnection(seed, huc);
                 ++connAttempts;
                 System.out.println("CODE=" + code);
-                if (code == HttpURLConnection.HTTP_MOVED_TEMP
-                    || code == HttpURLConnection.HTTP_MOVED_PERM
-                    || code == HttpURLConnection.HTTP_SEE_OTHER) {
-                    seed = huc.getHeaderField("Location");
 
-                    System.out.println("New seed: " + seed + " \nConnection attempts: " + connAttempts);
+                switch(code){
+                    case HTTP_MOVED_TEMP:
+                    case HTTP_MOVED_PERM:
+                    case HTTP_SEE_OTHER:{
+                        seed = huc.getHeaderField("Location");
+                        System.out.println("New seed: " + seed + " \nConnection attempts: " + connAttempts);
+                        break;
+                    }
+                    case HTTP_BAD_REQUEST:
+                    case HTTP_UNAUTHORIZED:
+                    case HTTP_PAYMENT_REQUIRED:
+                    case HTTP_FORBIDDEN:
+                    case HTTP_NOT_FOUND: {
+                        return true;
+                    }
+                    case HTTP_INTERNAL_ERROR:
+                    case HTTP_NOT_IMPLEMENTED:
+                    case HTTP_BAD_GATEWAY:
+                    case HTTP_UNAVAILABLE:
+                    case HTTP_GATEWAY_TIMEOUT:{
+                        System.out.println("SERVER ERROR: " + seed + " \nConnection attempts: " + connAttempts);
+                        Thread.sleep(3000);
+                        break;
+                    }
                 }
-            } catch (IOException e) {
+
+            } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
                 return true;
             }
-        } while (code != HttpURLConnection.HTTP_OK && connAttempts <= maxConnAttempts);
+        } while (code != HttpURLConnection.HTTP_OK && connAttempts < maxConnAttempts);
         return !(code==HttpURLConnection.HTTP_OK);
     }
 
@@ -100,5 +135,11 @@ public class ParametersResolver {
             logger.debug("Provided search terms are not empty.");
             return false;
         }
+    }
+
+    public int checkConnection(String seed, HttpURLConnection huc) throws IOException {
+        huc.setRequestMethod("HEAD");
+        huc.connect();
+        return huc.getResponseCode();
     }
 }
