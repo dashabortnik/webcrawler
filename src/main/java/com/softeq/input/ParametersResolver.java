@@ -69,7 +69,38 @@ public class ParametersResolver {
             huc.setRequestMethod("HEAD");
             huc.connect();
             int code = huc.getResponseCode();
-            return !(code == HttpURLConnection.HTTP_OK);
+
+            System.out.println("CODE="+code);
+            ///////////////////////////////////////////////////////////
+            boolean redirect = false;
+            if (code != HttpURLConnection.HTTP_OK) {
+                if (code == HttpURLConnection.HTTP_MOVED_TEMP
+                    || code == HttpURLConnection.HTTP_MOVED_PERM
+                    || code == HttpURLConnection.HTTP_SEE_OTHER)
+                    redirect = true;
+            }
+
+            if (redirect) {
+
+                // get redirect url from "location" header field
+                String newUrl = huc.getHeaderField("Location");
+
+                // open the new connection again
+                huc = (HttpURLConnection) new URL(newUrl).openConnection();
+                System.out.println("Redirect to URL : " + newUrl);
+                huc.setRequestMethod("HEAD");
+                huc.connect();
+                int statusCode = huc.getResponseCode();
+                System.out.println("Response code: " + statusCode);
+                System.out.println(!(statusCode==HttpURLConnection.HTTP_OK));
+                return !(statusCode==HttpURLConnection.HTTP_OK);
+            } else {
+                System.out.println(!(code==HttpURLConnection.HTTP_OK));
+                return !(code==HttpURLConnection.HTTP_OK);
+            }
+
+//////////////////////////////////////////////////////////////////////////////
+            //return !(code == HttpURLConnection.HTTP_OK);
         } catch (IOException e) {
             logger.warn("Provided URL " + seed + " is not available: " + e);
             return true;

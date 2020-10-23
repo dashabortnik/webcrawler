@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+import com.shekhargulati.urlcleaner.UrlCleaner;
+
 /**
  * Handler class for user input from console. Accepts a single search query.
  */
@@ -39,6 +41,8 @@ public class ConsoleInputHandler implements InputHandler {
                 System.out.println("Please provide a starting URL (seed) for web crawling.");
                 seed = in.nextLine();
                 logger.debug("User entered seed: " + seed);
+//                seed = UrlCleaner.normalizeUrl(seed);
+//                logger.debug("Normalized seed: " + seed);
             } while (parametersResolver.isInvalidUrl(seed));
 
             //For searchTerms: user input is requested in form of a string of comma-separated values.
