@@ -2,17 +2,14 @@ package com.softeq.service;
 
 import com.softeq.input.LinkNormalizer;
 import com.softeq.input.SearchInput;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Class for web crawling according to specified parameters.
@@ -21,7 +18,6 @@ public class WebCrawler {
 
     final Logger logger = LogManager.getLogger(WebCrawler.class);
 
-    public static final String CSS_LINK_SELECTOR = "a[href]";
     public static final String PAGE_ATTRIBUTE_LINK_SELECTOR = "abs:href";
 
     /**
@@ -33,9 +29,9 @@ public class WebCrawler {
      */
     private final ArrayList<SearchResult> searchData;
     /**
-     * Field visitedPagesCounter counts total number of pages visited by web crawler.
+     * Field pagesToVisit contains a queue of links that haven't been crawled yet.
      */
-    private int visitedPagesCounter = 0;
+    private final Queue<String> pagesToVisit = new ConcurrentLinkedQueue<>();
 
     public WebCrawler() {
         links = new HashSet<>();
@@ -56,81 +52,52 @@ public class WebCrawler {
      */
     public void getPageLinks(SearchInput searchInput, int depthCounter) {
 
-        /* Fields <b>seed</b>, <b>linkDepth</b>, <b>maxPagesNumber</b>,<b>searchTermsList</b> are extracted from
-          SearchInput object and contain search parameters provided by user. */
-
         //use LinkNormalizer which adds http, if missing, and normalizes the URL
         LinkNormalizer ln = new LinkNormalizer();
         String seed = ln.normalizeUrl(searchInput.getSeed());
 
-        final int linkDepth = searchInput.getLinkDepth();
         final int maxPagesNumber = searchInput.getMaxVisitedPagesLimit();
         ArrayList<String> searchTermsList = searchInput.getSearchTermsList();
 
-        /* Field totalHits counts a sum of hits for all search terms on this page.*/
-        int totalHits;
+        while(this.links.size()< maxPagesNumber) {
+            String currentUrl;
+            if (this.links.isEmpty()) {
+                currentUrl = seed;
+            } else {
+                currentUrl = this.getNextUrl();
+            }
 
-        /*Field hitsByWord contains a list of individual appearances of every search word on this page.*/
-        ArrayList<Integer> hitsByWord = new ArrayList<>();
-
-        // Check if you have already crawled the URLs
-        if (!links.contains(seed) && (depthCounter < linkDepth) && visitedPagesCounter < maxPagesNumber) {
-            logger.debug("Current depth: " + depthCounter + " [" + seed + "]");
-            try {
-
-                if (links.add(seed)) {
-                    System.out.println(seed);
-                }
-
-                // Fetch the HTML code
-                Document document = Jsoup.connect(seed).get();
-
-                visitedPagesCounter++;
-                logger.debug("Current page count: " + visitedPagesCounter);
-
-                //extract the whole document body
-                String html = document.body().toString();
-                String parsedText = Jsoup.parse(html, seed).text().toLowerCase();
-
-                totalHits = countWordMatches(searchTermsList, hitsByWord, parsedText);
-
-                // Parse the HTML to extract links to other URLs
-                Elements linksOnPage = document.select(CSS_LINK_SELECTOR);
-                depthCounter++;
-
-                searchData.add(new SearchResult(seed, totalHits, hitsByWord));
-
-                if (linksOnPage.isEmpty()) {
-                    logger.info("No links were found on the page." + seed);
-                } else {
-                    // For each extracted URL invoke the method getPageLinks recursively again
-                    for (Element page : linksOnPage) {
-                        getPageLinks(new SearchInput(page.attr(PAGE_ATTRIBUTE_LINK_SELECTOR), linkDepth,
-                            maxPagesNumber, searchTermsList), depthCounter);
-                    }
-                }
-            } catch (IOException e) {
-                logger.warn("Exception for '" + seed + "': " + e);
+            if(currentUrl!=null) {
+                CrawlerExecutor crawlerExecutor = new CrawlerExecutor();
+                crawlerExecutor.crawl(currentUrl, pagesToVisit);
+                links.add(currentUrl);
+                int totalHitsNumber = crawlerExecutor.countWordMatches(searchTermsList);
+                List<Integer> hitsByWord = crawlerExecutor.getHitsByWord();
+            } else {
+                System.out.println("There are no other links to follow.");
+                System.exit(0);
             }
         }
     }
 
-    private int countWordMatches(ArrayList<String> searchTermsList, ArrayList<Integer> hitsByWord, String parsedText){
-        int totalHitsNumber = 0;
+    /**
+     * Returns the next URL to visit with a check that we haven't visited it before.      *
+     * @return String value of the next URl
+     */
+    private String getNextUrl() {
+        String nextUrl;
+        LinkNormalizer linkNormalizer = new LinkNormalizer();
+        do {
+            nextUrl = this.pagesToVisit.poll();
 
-        //count occurrences of given search words in the text
-        for (String searchWord : searchTermsList) {
-            int number = StringUtils.countMatches(parsedText, searchWord.toLowerCase());
-            logger.debug("Count of phrase <" + searchWord + "> is: " + number);
-
-            //add to list of hits for this link
-            hitsByWord.add(number);
-
-            //add to sum of all hits for this link
-            totalHitsNumber = totalHitsNumber + number;
-            logger.debug("Total hits: " + totalHitsNumber);
-        }
-        return totalHitsNumber;
+            if(nextUrl!=null){
+                nextUrl = linkNormalizer.normalizeUrl(nextUrl);
+            }
+        } while(this.links.contains(nextUrl));
+        return nextUrl;
     }
+
+
+
 
 }
