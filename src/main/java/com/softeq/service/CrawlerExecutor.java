@@ -1,5 +1,6 @@
 package com.softeq.service;
 
+import com.softeq.input.Link;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,16 +24,23 @@ public class CrawlerExecutor {
 
     private List<Integer> hitsByWord = new ArrayList<>();
 
-    public void crawl(String url, Queue<String> pagesToVisit) {
+    public void crawl(Link url, Queue<Link> pagesToVisit) {
         try {
-            this.document = Jsoup.connect(url).get();
-            System.out.println("Received web page at " + url);
+            this.document = Jsoup.connect(url.getUrl()).get();
+            System.out.println("Received web page at " + url.getUrl() + " with depth " + url.getUrlDepth());
 
             Elements linksOnPage = document.select(CSS_LINK_SELECTOR);
 
             for(Element link : linksOnPage) {
-                pagesToVisit.add(link.absUrl("href"));
+                int newDepth = url.getUrlDepth()+1;
+                Link tempLink = new Link(link.absUrl("href"), newDepth);
+                pagesToVisit.add(tempLink);
             }
+
+//            for (Link element : pagesToVisit) {
+//                System.out.println(element.toString());
+//            }
+
         } catch(IOException ioe) {
             System.out.println("Error in out HTTP request " + ioe);
         }

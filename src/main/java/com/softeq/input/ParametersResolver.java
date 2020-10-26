@@ -36,14 +36,17 @@ public class ParametersResolver {
     public SearchInput resolveParams(String seed, String searchTermsLine, int linkDepth, int maxPagesLimit) {
 
         int inputLinkDepth = Integer.parseInt(ConstantConfig.getInstance().getProperty(Constant.DEF_LINK_DEPTH));
+        System.out.println("CONST LINK DEPTH = " + inputLinkDepth);
         if (linkDepth > 0) {
             inputLinkDepth = linkDepth;
         }
+        System.out.println("USER LINK DEPTH = " + inputLinkDepth);
 
         int inputMaxPagesLimit = Integer.parseInt(ConstantConfig.getInstance().getProperty(Constant.DEF_VISITED_PAGES_LIMIT));
         if (maxPagesLimit > 0) {
             inputMaxPagesLimit = maxPagesLimit;
         }
+        System.out.println("inputMaxPagesLimit = " + inputMaxPagesLimit);
 
         /* If input data is valid, a string of search terms is parsed into an array trimming extra spaces
           and converted into a list. All input data is used to create a SearchInput object.*/

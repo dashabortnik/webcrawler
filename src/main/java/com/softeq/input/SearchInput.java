@@ -11,7 +11,7 @@ public class SearchInput {
     /**
      * Field seed contains start page for web crawling.
      */
-    private final String seed;
+    private final Link seed;
     /**
      * Field linkDepth contains the length of chain of hits if a web crawler follows 1 link from each page.
      */
@@ -26,13 +26,13 @@ public class SearchInput {
     private final ArrayList<String> searchTermsList;
 
     public SearchInput(String seed, int linkDepth, int maxVisitedPagesLimit, ArrayList<String> searchTermsList) {
-        this.seed = seed;
+        this.seed = new Link(seed, 1);
         this.linkDepth = linkDepth;
         this.maxVisitedPagesLimit = maxVisitedPagesLimit;
         this.searchTermsList = searchTermsList;
     }
 
-    public String getSeed() {
+    public Link getSeed() {
         return seed;
     }
 

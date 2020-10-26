@@ -63,7 +63,7 @@ public class ConsoleInputHandler implements InputHandler {
             //For maxPagesLimit: user input is requested in form of a positive integer.
             System.out.println("Please provide a max pages limit as a positive integer.");
             userMaxPagesLimit = in.nextInt();
-            logger.debug("User entered link depth: " + userMaxPagesLimit);
+            logger.debug("User entered maxPagesLimit: " + userMaxPagesLimit);
 
         } catch (NoSuchElementException | IllegalStateException e) {
             logger.warn("Expected input element wasn't found or scanner was closed. " + e);
