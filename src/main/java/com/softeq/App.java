@@ -25,7 +25,7 @@ public class App {
 
             for (SearchInput searchInput : searchInputList) {
                 WebCrawler webCrawler = new WebCrawler();
-                webCrawler.getPageLinks(searchInput);
+                webCrawler.execute(searchInput);
                 oh.handleOutput(webCrawler.getSearchData(), searchInput.getSearchTermsList());
             }
         }

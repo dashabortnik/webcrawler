@@ -19,8 +19,6 @@ public class WebCrawler {
 
     final Logger logger = LogManager.getLogger(WebCrawler.class);
 
-    public static final String PAGE_ATTRIBUTE_LINK_SELECTOR = "abs:href";
-
     /**
      * Field links contains a set of all links visited by web crawler.
      */
@@ -47,9 +45,9 @@ public class WebCrawler {
      * Method getPageLinks fetches HTML code of the page, parses it into a String, counts matches for all search terms
      * in searchTermsList, extracts all links from the page and follows them recursively.
      *
-     * @param searchInput  contains all search parameters specified by user
+     * @param searchInput contains all search parameters specified by user
      */
-    public void getPageLinks(SearchInput searchInput) {
+    public void execute(SearchInput searchInput) {
 
         //use LinkNormalizer which adds http, if missing, and normalizes the URL
         LinkNormalizer ln = new LinkNormalizer();
@@ -60,7 +58,7 @@ public class WebCrawler {
         final int linkDepth = searchInput.getLinkDepth();
         ArrayList<String> searchTermsList = searchInput.getSearchTermsList();
 
-        while(this.links.size() < maxPagesNumber) {
+        while (this.links.size() < maxPagesNumber) {
             Link currentUrl;
             if (this.links.isEmpty()) {
                 link.setUrl(seed);
@@ -68,15 +66,10 @@ public class WebCrawler {
             } else {
                 currentUrl = this.getNextUrl();
             }
-            if(currentUrl!=null && currentUrl.getUrlDepth() <= linkDepth) {
-                CrawlerExecutor crawlerExecutor = new CrawlerExecutor();
-                crawlerExecutor.crawl(currentUrl, pagesToVisit);
-                links.add(currentUrl);
-                int totalHitsNumber = crawlerExecutor.countWordMatches(searchTermsList);
-                List<Integer> hitsByWord = crawlerExecutor.getHitsByWord();
-                searchData.add(new SearchResult(currentUrl.getUrl(), totalHitsNumber, hitsByWord));
+            if (currentUrl != null && currentUrl.getUrlDepth() <= linkDepth) {
+                initiateCrawling(currentUrl, searchTermsList);
             } else {
-                System.out.println("Either there are no other links to follow, or the depth of crawling was exceeded.");
+                logger.info("Either there are no other links to follow, or the depth of crawling was exceeded.");
                 return;
             }
         }
@@ -84,6 +77,7 @@ public class WebCrawler {
 
     /**
      * Returns the next URL to visit with a check that we haven't visited it before.
+     *
      * @return String value of the next URl
      */
     private Link getNextUrl() {
@@ -91,14 +85,19 @@ public class WebCrawler {
         LinkNormalizer linkNormalizer = new LinkNormalizer();
         do {
             nextUrl = this.pagesToVisit.poll();
-            if(nextUrl!=null){
+            if (nextUrl != null) {
                 nextUrl.setUrl(linkNormalizer.normalizeUrl(nextUrl.getUrl()));
             }
-        } while(this.links.contains(nextUrl));
+        } while (this.links.contains(nextUrl));
         return nextUrl;
     }
 
-
-
-
+    private void initiateCrawling(Link currentUrl, ArrayList<String> searchTermsList) {
+        CrawlerExecutor crawlerExecutor = new CrawlerExecutor();
+        crawlerExecutor.crawl(currentUrl, pagesToVisit);
+        links.add(currentUrl);
+        int totalHitsNumber = crawlerExecutor.countWordMatches(searchTermsList);
+        List<Integer> hitsByWord = crawlerExecutor.getHitsByWord();
+        searchData.add(new SearchResult(currentUrl.getUrl(), totalHitsNumber, hitsByWord));
+    }
 }

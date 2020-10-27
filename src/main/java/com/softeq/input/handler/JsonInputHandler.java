@@ -98,7 +98,7 @@ public class JsonInputHandler extends AbstractFileHandler implements InputHandle
         return result;
     }
 
-    private String handleSeed(JSONObject input){
+    private String handleSeed(JSONObject input) {
         String seed = (String) input.get("seed");
         logger.debug("1. Seed - " + seed);
         //use LinkNormalizer which adds http, if missing, and normalizes the URL

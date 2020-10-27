@@ -1,9 +1,10 @@
 package com.softeq.input;
+
 import com.norconex.commons.lang.url.URLNormalizer;
 
- public class LinkNormalizer {
+public class LinkNormalizer {
 
-    public String normalizeUrl(String seed){
+    public String normalizeUrl(String seed) {
         if (!seed.toLowerCase().matches("^\\w+://.*")) {
             seed = "http://" + seed;
         }
@@ -24,7 +25,6 @@ import com.norconex.commons.lang.url.URLNormalizer;
 
         return un.toString();
     }
-
 
 
 }

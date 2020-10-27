@@ -9,6 +9,7 @@ public class Link {
         this.url = url;
         this.urlDepth = urlDepth;
     }
+
     public String getUrl() {
         return url;
     }

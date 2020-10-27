@@ -58,7 +58,7 @@ public class ConsoleInputHandler implements InputHandler {
         return searchInputList;
     }
 
-    private String requestSeed(Scanner in, ParametersResolver parametersResolver){
+    private String requestSeed(Scanner in, ParametersResolver parametersResolver) {
         //For seed: user input is requested until URL validity check in method <b>isValidUrl</b> returns true.
         String seed;
         do {
@@ -73,7 +73,7 @@ public class ConsoleInputHandler implements InputHandler {
         return seed;
     }
 
-    private String requestSearchTerms(Scanner in, ParametersResolver parametersResolver){
+    private String requestSearchTerms(Scanner in, ParametersResolver parametersResolver) {
         //For searchTerms: user input is requested in form of a string of comma-separated values.
         String searchTermsLine;
         do {
