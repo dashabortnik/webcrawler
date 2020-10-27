@@ -28,13 +28,13 @@ public class CrawlerExecutor {
     public void crawl(Link url, Queue<Link> pagesToVisit) {
         disableLogging();
         String urlValue = url.getUrl();
-        System.out.println("Loading page: " + urlValue);
+        System.out.println("Loading page: " + urlValue + " with depth = " + url.getUrlDepth());
 
         try (WebClient webClient = new WebClient(BrowserVersion.CHROME)) {
             // HtmlUnit emulation browser
             setWebClientOptions(webClient);
             HtmlPage page = webClient.getPage(urlValue);
-            webClient.waitForBackgroundJavaScript(10 * 1000); // Wait for js to execute in the background
+            webClient.waitForBackgroundJavaScript(500); // Wait for js to execute in the background
             pageAsText = page.asText();
             getPageAnchors(url, pagesToVisit, page);
         } catch (IOException e) {

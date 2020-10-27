@@ -25,6 +25,4 @@ public class LinkNormalizer {
 
         return un.toString();
     }
-
-
 }
