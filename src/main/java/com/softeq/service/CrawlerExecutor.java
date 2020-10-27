@@ -37,10 +37,6 @@ public class CrawlerExecutor {
                 pagesToVisit.add(tempLink);
             }
 
-//            for (Link element : pagesToVisit) {
-//                System.out.println(element.toString());
-//            }
-
         } catch(IOException ioe) {
             System.out.println("Error in out HTTP request " + ioe);
         }
