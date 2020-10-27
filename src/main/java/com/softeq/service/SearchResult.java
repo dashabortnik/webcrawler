@@ -1,6 +1,6 @@
 package com.softeq.service;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -20,9 +20,9 @@ public class SearchResult {
     /**
      * Field hitsByWord contains a list of individual appearances of every search word on this page.
      */
-    private final ArrayList<Integer> hitsByWord;
+    private final List<Integer> hitsByWord;
 
-    public SearchResult(String link, int totalHits, ArrayList<Integer> hitsByWord) {
+    public SearchResult(String link, int totalHits, List<Integer> hitsByWord) {
         this.link = link;
         this.totalHits = totalHits;
         this.hitsByWord = hitsByWord;
@@ -37,7 +37,7 @@ public class SearchResult {
      */
     public String toCSVStringHitsByWord() {
         StringBuilder sb = new StringBuilder(this.link).append(",");
-        ArrayList<Integer> hitsByWord = this.getHitsByWord();
+        List<Integer> hitsByWord = this.getHitsByWord();
         String hitsByWordString = hitsByWord.stream().map(Object::toString)
             .collect(Collectors.joining(","));
         sb.append(hitsByWordString);
@@ -52,7 +52,7 @@ public class SearchResult {
         return totalHits;
     }
 
-    public ArrayList<Integer> getHitsByWord() {
+    public List<Integer> getHitsByWord() {
         return hitsByWord;
     }
 }

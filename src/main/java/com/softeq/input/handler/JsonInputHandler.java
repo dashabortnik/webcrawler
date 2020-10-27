@@ -43,7 +43,6 @@ public class JsonInputHandler extends AbstractFileHandler implements InputHandle
         try (FileReader reader = new FileReader(this.getFileLink())) {
             //Read JSON file
             Object obj = jsonParser.parse(reader);
-
             JSONArray searchDataArray = (JSONArray) obj;
 
             for (Object o : searchDataArray) {
@@ -68,19 +67,12 @@ public class JsonInputHandler extends AbstractFileHandler implements InputHandle
 
         ParametersResolver parametersResolver = new ParametersResolver();
 
-        String seed = (String) input.get("seed");
-        logger.debug("1. Seed - " + seed);
-        //use LinkNormalizer which adds http, if missing, and normalizes the URL
-        LinkNormalizer ln = new LinkNormalizer();
-        seed = ln.normalizeUrl(seed);
-        logger.debug("Normalized seed - " + seed);
+        String seed = handleSeed(input);
 
-        int linkDepth;
-        linkDepth = handleInt("linkDepth", input);
+        int linkDepth = handleInt("linkDepth", input);
         logger.debug("2. Link depth - " + linkDepth);
 
-        int maxPagesLimit;
-        maxPagesLimit = handleInt("maxPagesLimit", input);
+        int maxPagesLimit = handleInt("maxPagesLimit", input);
         logger.debug("3. Max pages limit - " + maxPagesLimit);
 
         String searchTermsString = (String) input.get("searchTermsString");
@@ -90,7 +82,6 @@ public class JsonInputHandler extends AbstractFileHandler implements InputHandle
             logger.warn("Parsing of input parameters failed: invalid seed or search terms.");
             return null;
         }
-
         return parametersResolver.resolveParams(seed, searchTermsString, linkDepth, maxPagesLimit);
     }
 
@@ -105,5 +96,15 @@ public class JsonInputHandler extends AbstractFileHandler implements InputHandle
             logger.warn("Given number is not integer: " + e);
         }
         return result;
+    }
+
+    private String handleSeed(JSONObject input) {
+        String seed = (String) input.get("seed");
+        logger.debug("1. Seed - " + seed);
+        //use LinkNormalizer which adds http, if missing, and normalizes the URL
+        LinkNormalizer ln = new LinkNormalizer();
+        seed = ln.normalizeUrl(seed);
+        logger.debug("Normalized seed - " + seed);
+        return seed;
     }
 }

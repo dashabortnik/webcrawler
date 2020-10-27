@@ -9,13 +9,23 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static java.net.HttpURLConnection.*;
+import static java.net.HttpURLConnection.HTTP_BAD_GATEWAY;
+import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
+import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
+import static java.net.HttpURLConnection.HTTP_GATEWAY_TIMEOUT;
+import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
+import static java.net.HttpURLConnection.HTTP_MOVED_PERM;
+import static java.net.HttpURLConnection.HTTP_MOVED_TEMP;
+import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
+import static java.net.HttpURLConnection.HTTP_NOT_IMPLEMENTED;
+import static java.net.HttpURLConnection.HTTP_PAYMENT_REQUIRED;
+import static java.net.HttpURLConnection.HTTP_SEE_OTHER;
+import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
+import static java.net.HttpURLConnection.HTTP_UNAVAILABLE;
 
 /**
  * Class for checking and processing input data which prepares it for web crawler.
@@ -39,11 +49,13 @@ public class ParametersResolver {
         if (linkDepth > 0) {
             inputLinkDepth = linkDepth;
         }
+        System.out.println("User link depth = " + inputLinkDepth);
 
         int inputMaxPagesLimit = Integer.parseInt(ConstantConfig.getInstance().getProperty(Constant.DEF_VISITED_PAGES_LIMIT));
         if (maxPagesLimit > 0) {
             inputMaxPagesLimit = maxPagesLimit;
         }
+        System.out.println("Max pages limit = " + inputMaxPagesLimit);
 
         /* If input data is valid, a string of search terms is parsed into an array trimming extra spaces
           and converted into a list. All input data is used to create a SearchInput object.*/
@@ -77,10 +89,10 @@ public class ParametersResolver {
                 ++connAttempts;
                 System.out.println("CODE=" + code);
 
-                switch(code){
+                switch (code) {
                     case HTTP_MOVED_TEMP:
                     case HTTP_MOVED_PERM:
-                    case HTTP_SEE_OTHER:{
+                    case HTTP_SEE_OTHER: {
                         seed = huc.getHeaderField("Location");
                         System.out.println("New seed: " + seed + " \nConnection attempts: " + connAttempts);
                         break;
@@ -96,7 +108,7 @@ public class ParametersResolver {
                     case HTTP_NOT_IMPLEMENTED:
                     case HTTP_BAD_GATEWAY:
                     case HTTP_UNAVAILABLE:
-                    case HTTP_GATEWAY_TIMEOUT:{
+                    case HTTP_GATEWAY_TIMEOUT: {
                         System.out.println("SERVER ERROR: " + seed + " \nConnection attempts: " + connAttempts);
                         Thread.sleep(3000);
                         break;
@@ -108,7 +120,7 @@ public class ParametersResolver {
                 return true;
             }
         } while (code != HttpURLConnection.HTTP_OK && connAttempts < maxConnAttempts);
-        return !(code==HttpURLConnection.HTTP_OK);
+        return !(code == HttpURLConnection.HTTP_OK);
     }
 
     public boolean isNullOrEmptyString(String searchTerm) {
