@@ -74,7 +74,7 @@ public class WebCrawler {
                 links.add(currentUrl);
                 int totalHitsNumber = crawlerExecutor.countWordMatches(searchTermsList);
                 List<Integer> hitsByWord = crawlerExecutor.getHitsByWord();
-                searchData.add(new SearchResult(seed, totalHitsNumber, hitsByWord));
+                searchData.add(new SearchResult(currentUrl.getUrl(), totalHitsNumber, hitsByWord));
             } else {
                 System.out.println("Either there are no other links to follow, or the depth of crawling was exceeded.");
                 System.exit(0);
