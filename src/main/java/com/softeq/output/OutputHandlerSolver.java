@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Queue;
 
 public class OutputHandlerSolver {
 
@@ -39,12 +40,12 @@ public class OutputHandlerSolver {
         }
     }
 
-    public void handleOutput(ArrayList<SearchResult> searchData, ArrayList<String> searchTermsList) {
+    public void handleOutput(Queue<SearchResult> searchData, ArrayList<String> searchTermsList) {
 
         for (OutputFormat outputFormat : outputFormatList) {
 
             //deep clone search results list
-            ArrayList<SearchResult> clonedSearchData = deepClone(searchData);
+            List<SearchResult> clonedSearchData = deepClone(new ArrayList<>(searchData));
             //sort and choose number of entries to print
             ArrayList<String> formattedData = new OutputDataFormatter().formatOutputData(clonedSearchData, searchTermsList, outputFormat);
 

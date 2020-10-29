@@ -9,8 +9,16 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveAction;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Class for web crawling according to specified parameters.
@@ -22,22 +30,26 @@ public class WebCrawler {
     /**
      * Field links contains a set of all links visited by web crawler.
      */
-    private final HashSet<Link> links;
+    private final Map<Integer, Link> links;
     /**
      * Field searchData contains a list of SearchResult objects for all visited pages.
      */
-    private final ArrayList<SearchResult> searchData;
+    private final Queue<SearchResult> searchData;
     /**
      * Field pagesToVisit contains a queue of links that haven't been crawled yet.
      */
     private final Queue<Link> pagesToVisit = new ConcurrentLinkedQueue<>();
+    private int maxPagesNumber;
+    private int linkDepth;
+    AtomicInteger pageCounter = new AtomicInteger(0);
+    CountDownLatch completedThreadCounter;
 
     public WebCrawler() {
-        links = new HashSet<>();
-        searchData = new ArrayList<>();
+        links = new ConcurrentHashMap<>();
+        searchData = new ConcurrentLinkedQueue<>();
     }
 
-    public ArrayList<SearchResult> getSearchData() {
+    public Queue<SearchResult> getSearchData() {
         return searchData;
     }
 
@@ -47,57 +59,60 @@ public class WebCrawler {
      *
      * @param searchInput contains all search parameters specified by user
      */
-    public void execute(SearchInput searchInput) {
+    public void execute(SearchInput searchInput) throws InterruptedException {
 
         //use LinkNormalizer which adds http, if missing, and normalizes the URL
         LinkNormalizer ln = new LinkNormalizer();
         Link link = searchInput.getSeed();
-        String seed = ln.normalizeUrl(link.getUrl());
+        link.setUrl(ln.normalizeUrl(link.getUrl()));
 
-        final int maxPagesNumber = searchInput.getMaxVisitedPagesLimit();
-        final int linkDepth = searchInput.getLinkDepth();
+        maxPagesNumber = searchInput.getMaxVisitedPagesLimit();
+        completedThreadCounter = new CountDownLatch(maxPagesNumber);
+
+        linkDepth = searchInput.getLinkDepth();
         ArrayList<String> searchTermsList = searchInput.getSearchTermsList();
 
-        while (this.links.size() < maxPagesNumber) {
-            Link currentUrl;
-            if (this.links.isEmpty()) {
-                link.setUrl(seed);
-                currentUrl = link;
-            } else {
-                currentUrl = this.getNextUrl();
-            }
-            if (currentUrl != null && currentUrl.getUrlDepth() <= linkDepth) {
-                initiateCrawling(currentUrl, searchTermsList);
-            } else {
-                logger.info("Either there are no other links to follow, or the depth of crawling was exceeded.");
-                return;
-            }
+        ForkJoinPool pool = new ForkJoinPool();
+        pool.invoke(new TaskInitializer(link, searchTermsList));
+        completedThreadCounter.await();
+        pool.shutdownNow();
+
+    }
+
+    private class TaskInitializer extends RecursiveAction {
+
+        private final Link link;
+        private final List<String> searchTermsList;
+
+        public TaskInitializer(Link link, List<String> searchTermsList) {
+            this.link = link;
+            this.searchTermsList = searchTermsList;
         }
-    }
 
-    /**
-     * Returns the next URL to visit with a check that we haven't visited it before.
-     *
-     * @return String value of the next URl
-     */
-    private Link getNextUrl() {
-        Link nextUrl;
-        LinkNormalizer linkNormalizer = new LinkNormalizer();
-        do {
-            nextUrl = this.pagesToVisit.poll();
-            if (nextUrl != null) {
-                nextUrl.setUrl(linkNormalizer.normalizeUrl(nextUrl.getUrl()));
-            }
-        } while (this.links.contains(nextUrl));
-        return nextUrl;
-    }
+        @Override
+        protected void compute() {
+                if (pageCounter.incrementAndGet() <= maxPagesNumber) {
+                    //process given link in class field
+                    CrawlerExecutor crawlerExecutor = new CrawlerExecutor();
+//                    boolean depthExceeded =
+                    crawlerExecutor.crawl(link, pagesToVisit, linkDepth);
+                    links.put(links.size() + 1, link);
+                    int totalHitsNumber = crawlerExecutor.countWordMatches(searchTermsList);
+                    List<Integer> hitsByWord = crawlerExecutor.getHitsByWord();
+                    searchData.add(new SearchResult(link.getUrl(), totalHitsNumber, hitsByWord));
+                    completedThreadCounter.countDown();
+                    for (Link link : pagesToVisit) {
+                        TaskInitializer taskInitializer = new TaskInitializer(pagesToVisit.poll(), searchTermsList);
+                        taskInitializer.fork();
+                    }
+//                    if(depthExceeded){
+//                        while(completedThreadCounter.getCount()>0){
+//                            completedThreadCounter.countDown();
+//                        }
+//                    }
+                }
 
-    private void initiateCrawling(Link currentUrl, ArrayList<String> searchTermsList) {
-        CrawlerExecutor crawlerExecutor = new CrawlerExecutor();
-        crawlerExecutor.crawl(currentUrl, pagesToVisit);
-        links.add(currentUrl);
-        int totalHitsNumber = crawlerExecutor.countWordMatches(searchTermsList);
-        List<Integer> hitsByWord = crawlerExecutor.getHitsByWord();
-        searchData.add(new SearchResult(currentUrl.getUrl(), totalHitsNumber, hitsByWord));
+
+        }
     }
 }

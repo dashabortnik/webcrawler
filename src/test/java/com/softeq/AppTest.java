@@ -28,7 +28,7 @@ public class AppTest {
     }
 
     @Test
-    public void integrationTest() {
+    public void integrationTest() throws InterruptedException {
         App.main(new String[]{"src/test/resources/inputDataArray.txt"});
 
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());

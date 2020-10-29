@@ -4,7 +4,9 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.norconex.commons.lang.url.URLException;
 import com.softeq.input.Link;
+import com.softeq.input.LinkNormalizer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.LogFactory;
 import org.apache.logging.log4j.LogManager;
@@ -25,7 +27,7 @@ public class CrawlerExecutor {
     private String pageAsText;
     private final List<Integer> hitsByWord = new ArrayList<>();
 
-    public void crawl(Link url, Queue<Link> pagesToVisit) {
+    public void crawl(Link url, Queue<Link> pagesToVisit, int linkDepth) {
         disableLogging();
         String urlValue = url.getUrl();
         System.out.println("Loading page: " + urlValue + " with depth = " + url.getUrlDepth());
@@ -36,13 +38,19 @@ public class CrawlerExecutor {
             HtmlPage page = webClient.getPage(urlValue);
             webClient.waitForBackgroundJavaScript(500); // Wait for js to execute in the background
             pageAsText = page.asText();
-            getPageAnchors(url, pagesToVisit, page);
+            if(url.getUrlDepth()<linkDepth) {
+                getPageAnchors(url, pagesToVisit, page);
+               // return false;
+            } else {
+            //    return true;
+            }
         } catch (IOException e) {
             e.printStackTrace();
+         //   return false;
         }
     }
 
-    public int countWordMatches(ArrayList<String> searchTermsList) {
+    public int countWordMatches(List<String> searchTermsList) {
         int totalHitsNumber = 0;
         String parsedText = pageAsText.toLowerCase();
         //count occurrences of given search words in the text
@@ -75,16 +83,18 @@ public class CrawlerExecutor {
     }
 
     private void getPageAnchors(Link url, Queue<Link> pagesToVisit, HtmlPage page) {
+
         List<HtmlAnchor> anchorsOnPage = page.getAnchors();
         for (HtmlAnchor anchor : anchorsOnPage) {
             try {
                 String temp = anchor.getHrefAttribute();
-                final URL absUrl;
-                absUrl = ((HtmlPage) anchor.getPage()).getFullyQualifiedUrl(temp);
+                final URL absUrl = ((HtmlPage) anchor.getPage()).getFullyQualifiedUrl(temp);
+                LinkNormalizer linkNormalizer = new LinkNormalizer();
+                String normUrl = linkNormalizer.normalizeUrl(absUrl.toString());
                 int newDepth = url.getUrlDepth() + 1;
-                Link tempLink = new Link(absUrl.toString(), newDepth);
+                Link tempLink = new Link(normUrl, newDepth);
                 pagesToVisit.add(tempLink);
-            } catch (MalformedURLException e) {
+            } catch (URLException | MalformedURLException e) {
                 e.printStackTrace();
             }
         }
