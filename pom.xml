@@ -13,7 +13,7 @@
         <maven.compiler.release>11</maven.compiler.release>
 
         <junit.version>4.13.1</junit.version>
-        <jsoup.version>1.13.1</jsoup.version>
+        <jsoup.version>1.15.3</jsoup.version>
         <htmlunit.version>2.37.0</htmlunit.version>
         <opencsv.version>4.4</opencsv.version>
         <commons-lang3.version>3.10</commons-lang3.version>
